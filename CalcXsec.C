@@ -93,18 +93,16 @@ void CalcXsec(){
 				weight*=(*(genEvt->WeightsMatrix))(ii,iToy);
 			}
 			weight*=genEvt->weightHL;
-			//int fluxBin=GetFluxBinIndex(genEvt->nu_trueE);
-			//if(fluxBin<0) continue;
-			//weight*=(fluxCov->varVec[fluxBin]);
+			int fluxBin=GetFluxBinIndex(genEvt->nu_trueE);
+			if(fluxBin<0) continue;
+			weight*=(fluxCov->varVec[fluxBin]);
 			if(weight>-1e-6 && weight<10.) nGen[iToy][bin]+=weight;
 		}
 		//selected loop
 		if(iEntry<nEntriesD){
 			defaultT->GetEntry(iEntry);
-			int bin=binHelper->GetBinIPS(selEvt->truelepton_mom, selEvt->truelepton_costheta);
-			if((selEvt->IsOnWater)==1 && bin>0 && (selEvt->topology)==0 && (selEvt->nu_pdg)==-14) {
-				cout << "shit";
-				/*
+			int binSel=binHelper->GetBinIPS(selEvt->truelepton_mom, selEvt->truelepton_costheta);
+			if((selEvt->IsOnWater)==1 && binSel>0 && (selEvt->topology)==0 && (selEvt->nu_pdg)==-14) {
 				//TODO: FV cut here!?!?!?
 				fluxCov->SetSeed(134987);
 				for(int iToy=0; iToy<nToys; iToy++){
@@ -117,9 +115,8 @@ void CalcXsec(){
 					int fluxBin=GetFluxBinIndex(selEvt->nu_trueE);
 					if(fluxBin<0) continue;
 					weight*=(fluxCov->varVec[fluxBin]);
-					if(weight>-1e-6 && weight<10.) nSel[iToy][bin]+=weight;
+					if(weight>-1e-6 && weight<10.) nSel[iToy][binSel]+=weight;
 				}
-				*/
 			}
 		} // selected events
 	} // iEntry

@@ -85,6 +85,7 @@ int xsecBinsHelper::GetPBin(Float_t p) {
 	return ii;
 }
 int xsecBinsHelper::GetCosBin(Float_t cos, int PBin) {
+	if(PBin<0) return -1;
 	int ii=0;
 	while(cos>CosBins[PBin][ii]){
 		ii++;
@@ -99,10 +100,12 @@ int xsecBinsHelper::GetCosBin(Float_t cos, int PBin) {
 int xsecBinsHelper::GetBin(Float_t p, Float_t cos) {
 	int PBin=GetPBin(p);
 	int CosBin=GetCosBin(cos, PBin);
+	if (CosBin<0 || PBin<0) return -1;
 	return BinMap[CosBin+PBin*4];
 }
 int xsecBinsHelper::GetBinIPS(Float_t p, Float_t cos) {
 	int bin=GetBin(p,cos);
+	if(bin<0) return -1;
 	int PBin = GetPBin(p);
 	int skip[9] = {0,1,4,8,12,16,20,24,27};
 	for(int ii=0; ii<9; ii++) {
