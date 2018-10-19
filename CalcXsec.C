@@ -3,6 +3,7 @@
 #include <TMatrixD.h>
 #include <TTree.h>
 #include "./util/p0dCCEventClass.C"
+//to clone: git clone tcampbell@ens-hpc.engr.colostate.edu:/home/other/tcampbell/git/CalcXsec.git
 
 void CalcXsec(){
 	//define files
