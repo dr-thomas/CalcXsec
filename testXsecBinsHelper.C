@@ -1,5 +1,6 @@
 #include <iostream>
-#include "./xsecBinsHelper.C"
+#include "./xsecBinsHelper.hxx"
+#include "./xsecBinsHelper.cxx"
 
 //here are tests and development scratch work for the xsecBinsHelper class
 //
