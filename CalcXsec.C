@@ -3,22 +3,24 @@
 #include <TMatrixD.h>
 #include <TTree.h>
 #include "./util/p0dCCEventClass.C"
+#include "./util/GetMCEventRateFromFitIPS.C"
 //to clone: git clone tcampbell@ens-hpc.engr.colostate.edu:/home/other/tcampbell/git/CalcXsec.git
 
 void CalcXsec(){
 	//define files
-	TString inFMCStr = "/Users/thomascampbell/p0dCCAnalysis/FitResults/Macros/XsecDrawFiles/WaterSubFullNom.root";
 	TString inFMCGenieStr = "/Users/thomascampbell/p0dCCAnalysis/FitResults/Macros/XsecDrawFiles/GenWithFlagGENIE.root";
 	TString inFMCEffStr = "/Users/thomascampbell/p0dCCAnalysis/FitResults/Macros/XsecDrawFiles/GenWithFlag.root";
 	TString inFFitStr = "/Users/thomascampbell/p0dCCAnalysis/FitResults/DataFits/NEUT/fitBaseOutNoReg.root";
-	TString inFDataStr = "/Users/thomascampbell/p0dCCAnalysis/FitResults/Macros/XsecDrawFiles/WaterSubData.root";
 
-	TFile* inFMC = new TFile(inFMCStr,"OPEN");
 	TFile* inFMCEff = new TFile(inFMCEffStr,"OPEN");
 	TFile* inFMCGenie = new TFile(inFMCGenieStr,"OPEN");
 	TFile* inFFit = new TFile(inFFitStr,"OPEN");
-	TFile* inFData = new TFile(inFDataStr,"OPEN");
 
+	//TODO: fit should have been done against SF->RFG+RPA tuning... investigate!
+	//acutlally not really that important as signal parameters are free,
+	//but definately TODO TODO need to calc data event rate with used MC 
+	//from the fit
+	
 	//define trees
 	TTree* truthT = (TTree*)inFMCEff->Get("outTtruth");
 	p0dCCEvent* genEvt = new p0dCCEvent();
@@ -37,10 +39,10 @@ void CalcXsec(){
 	genEvtGENIE->SetBranchAddresses(truthTG, true, true);
 	int nEntriesTruthG = truthTG->GetEntries();
 
-
 	//set up cov matrices 
 	//intilize results (ngen, nsel, etc) 
 	//loop over events, loop over toys
 	//calc xsec
+	Float_t* nomEvtRate = GetMCEventRateFromFitIPS();
 	//draw results
 }
