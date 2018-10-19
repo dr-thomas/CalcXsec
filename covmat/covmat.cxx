@@ -98,4 +98,5 @@ void covMatD::Throw() {
 			varVec[ii]+=matDecomp[ii][jj]*randVec[jj];
 		}
 	}
+	delete []randVec;
 }

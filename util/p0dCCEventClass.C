@@ -14,11 +14,9 @@ class p0dCCEvent {
 		Float_t weightHL;
 
 		p0dCCEvent() {
-			TMatrixD WeightsMatrixInit(15,400);
-			WeightsMatrix = &WeightsMatrixInit;
+			WeightsMatrix = new TMatrixD(15,400);
 			topology=-1;
 			nu_pdg=-1;
-			nu_trueE=-1;
 			nu_trueE=-999.;
 			truelepton_mom=-999.;
 			truelepton_costheta=-999.;

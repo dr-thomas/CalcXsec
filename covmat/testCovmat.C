@@ -20,7 +20,7 @@ void testCovmat(){
 
 	for(int i=0;i<nBins;i++){
 		for(int j=0;j<nBins;j++){
-			cov(i, j) = (*covIn)(i,j);
+			cov(i, j) = (*covIn)(i+30,j+30);
       }
     }
     finFluxCov->Close();
