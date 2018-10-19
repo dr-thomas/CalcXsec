@@ -1,9 +1,6 @@
 #ifndef XSECBINSHELPER_H
 #define XSECBINSHELPER_H
 
-#include <iostream>
-#include "Rtypes.h"
-
 // xsecBinsHelper has utilities for and the definition of the bins
 //
 //Oct. 18, 2018

@@ -1,6 +1,5 @@
 #define XSECBINSHELPER_C
 #include <iostream>
-#include "Rtypes.h"
 #include "./xsecBinsHelper.hxx"
 
 // xsecBinsHelper has utilities for and the definition of the bins
