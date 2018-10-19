@@ -5,25 +5,33 @@
 #include <TMatrix.h>
 #include <TMatrixDSym.h>
 #include <TDecompChol.h>
+#include <TRandom3.h>
+
+// covMatD has covariance matrix throwing utilities 
+//
+//Oct. 18, 2018
+//Author: Thomas Campbell <thomascampbell1@gmail.com>
+//
 
 covMatD::covMatD(Int_t dimension){
 	dim = dimension;
-	vec = new Double_t[dim];
 	mat = new Double_t*[dim];
+	varVec = new Double_t[dim];
 	matDecomp = new Double_t*[dim];
 	for (int ii=0; ii<dim; ii++) {
 		mat[ii] = new Double_t[dim];
 		matDecomp[ii] = new Double_t[dim];
 	}
+	randN.SetSeed(21344213);
 }
 covMatD::~covMatD(){
 	for (int ii=0; ii<dim; ii++) {
-		delete mat[ii];
-		delete matDecomp[ii];
+		delete []mat[ii];
+		delete []matDecomp[ii];
 	}
-	delete mat;
-	delete matDecomp;
-	delete vec;
+	delete []mat;
+	delete []matDecomp;
+	delete []varVec;
 }
 
 // Setting stuff
@@ -32,12 +40,6 @@ void covMatD::SetMat(Int_t ii, Int_t jj, Double_t val) {
 		return;
 	}
 	mat[ii][jj]=val;
-}
-void covMatD::SetVec(Int_t ii, Double_t val) {
-	if (ii>=dim) { 
-		return;
-	}
-	vec[ii]=val;
 }
 
 // Retrieving stuff
@@ -50,10 +52,19 @@ TMatrixDSym* covMatD::GetTMatrix() {
 	}
 	return out;
 }
+TMatrixD* covMatD::GetDecompTMatrix() {
+	TMatrixD* out = new TMatrixD(dim,dim);
+	for (int ii=0; ii<dim; ii++) {
+		for (int jj=0; jj<dim; jj++) {
+			(*out)(ii,jj) = matDecomp[ii][jj];
+		}
+	}
+	return out;
+}
 
 // Throwing stuff
 void covMatD::SetSeed(int in){
-	seed = in;
+	randN.SetSeed(in);
 }
 void covMatD::Decompose() {
 	TMatrixDSym dmat(dim);
@@ -74,12 +85,17 @@ void covMatD::Decompose() {
 	}
 }
 
-/* Throwing stuff
- * what to return: set vector as central values, return vecotor of 
- * averages and uncertainties, or maybe a result struct <- that one
- *
- * want ability to add multiple covariance matricies and specify 
- * similar paramters (eg correlated throwing of flux parameters from 
- * fit cov and BANFF matrix)?  -> maybe not nesseary?? 
- */
+// Throw updates the variation vector which is to be directly accessed
+void covMatD::Throw() {
+	Double_t* randVec = new Double_t[dim];
+	for(int ii=0; ii<dim; ii++){
+		randVec[ii]=randN.Gaus();
+		varVec[ii]=0.;
+	}
 
+	for(int ii=0; ii<dim; ii++){
+		for(int jj=0; jj<dim; jj++){
+			varVec[ii]+=matDecomp[ii][jj]*randVec[jj];
+		}
+	}
+}

@@ -2,6 +2,8 @@
 #define COVMAT_H
 
 #include <TMatrixDSym.h>
+#include <TMatrixD.h>
+#include <TRandom3.h>
 
 // covMatD has covariance matrix throwing utilities 
 //
@@ -15,18 +17,18 @@ class covMatD {
 		covMatD(Int_t dimension);
 		~covMatD();
 		void SetMat(Int_t ii, Int_t jj, Double_t val);
-		void SetVec(Int_t ii, Double_t val);
 		TMatrixDSym* GetTMatrix();
+		TMatrixD* GetDecompTMatrix();
 		void SetSeed(int in);
 		void Decompose();
+		void Throw();
+
+		Double_t* varVec;
 
 	private:
 		Double_t** mat;
 		Double_t** matDecomp;
-		Double_t* vec;
-		Double_t* resCen;
-		Double_t* resErr;
 		Int_t dim;
-		Int_t seed;
+		TRandom3 randN;
 };
 #endif
