@@ -8,6 +8,8 @@
 #include "./util/GetMCEventRateFromFitIPS.C"
 #include "./covmat/covmat.hxx"
 #include "./covmat/covmat.cxx"
+#include "./util/suffstat.hxx"
+#include "./util/suffstat.cxx"
 //to clone: git clone tcampbell@ens-hpc.engr.colostate.edu:/home/other/tcampbell/git/CalcXsec.git
 
 int GetFluxBinIndex(Float_t);
@@ -35,6 +37,7 @@ void CalcXsec(){
 
 	//Genie
 	//TODO: add weight to Genie stuff, re-produce those comparisions...
+	//(is there even flux weighting for GENIE MC?!?!)
 	TTree* truthTG = (TTree*)inFMCGenie->Get("outTtruth");
 	p0dCCEvent* genEvtGENIE = new p0dCCEvent();
 	genEvtGENIE->SetBranchAddresses(truthTG, true, true);
@@ -122,14 +125,31 @@ void CalcXsec(){
 	} // iEntry
 
 	//get data event rates
+	Float_t* nomEvtRate = GetMCEventRateFromFitIPS();
 	fitCov->SetSeed(12334987);
 	for(int iToy=0; iToy<400; iToy++){
 		fitCov->Throw();
+		for(int ii=0; ii<19; ii++){
+			nData[iToy][ii]=(nomEvtRate[ii]*(fitCov->varVec[binHelper->ips2full[ii]]));
+		}
 	}
 
-
 	//calc xsec
-	Float_t* nomEvtRate = GetMCEventRateFromFitIPS();
+	//TODO: nTargets, intFlux...<- should be correlated w/ everything else ???
+	//TODO: binwidth
+	suffStat** xsecStat = new suffStat*[19];
+	for(int ii=0; ii<19; ii++){
+		xsecStat[ii] = new suffStat();
+	}
+	for(int iToy=0; iToy<400; iToy++){
+		for(int ii=0; ii<19; ii++){
+			Float_t xsec = nData[iToy][ii]/(nSel[iToy][ii]/nGen[iToy][ii]);
+			//xsec*=1.0/intFlux[iToy];
+			//xsec*=1.0/nTargets[iToy];
+			//xsec*=1.0/binWidth[ii];
+		}
+	}
+
 	//draw results
 }
 

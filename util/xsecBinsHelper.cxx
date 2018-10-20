@@ -53,6 +53,12 @@ xsecBinsHelper::xsecBinsHelper(){
 	for(int ii=0; ii<36; ii++){
 		BinMap[ii] = initBinMap[ii];
 	}
+
+	Int_t initIps2full[19] = {2,3,5,6,7,9,10,11,13,14,15,17,18,19,21,22,23,25,26};
+	ips2full = new Int_t[19];
+	for(int ii=0; ii<19; ii++){
+		ips2full[ii] = initIps2full[ii];
+	}
 }
 xsecBinsHelper::~xsecBinsHelper(){
 	delete []PBins;
@@ -114,4 +120,7 @@ int xsecBinsHelper::GetBinIPS(Float_t p, Float_t cos) {
 		}
 	}
 	return (bin-PBin-1);
+}
+int xsecBinsHelper::GetBinFromIPS(int inBin){
+	return ips2full[inBin];
 }

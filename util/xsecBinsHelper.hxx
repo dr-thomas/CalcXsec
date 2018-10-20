@@ -17,6 +17,8 @@ class xsecBinsHelper {
 		int GetCosBin(Float_t cos, int PBin);
 		int GetBin(Float_t p, Float_t cos);
 		int GetBinIPS(Float_t p, Float_t cos);
+		int GetBinFromIPS(int);
+		Int_t* ips2full;
 
 	private:
 		Float_t* PBins;
