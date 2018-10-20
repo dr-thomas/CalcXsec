@@ -136,7 +136,7 @@ void CalcXsec(){
 
 	//calc xsec
 	//TODO: nTargets, intFlux...<- should be correlated w/ everything else ???
-	//TODO: binwidth
+	//TODO: binwidth tests!!!!!!!!  you were drunk when you wrote that!
 	suffStat** xsecStat = new suffStat*[19];
 	for(int ii=0; ii<19; ii++){
 		xsecStat[ii] = new suffStat();
