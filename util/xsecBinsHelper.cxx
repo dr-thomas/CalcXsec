@@ -124,7 +124,7 @@ int xsecBinsHelper::GetBinIPS(Float_t p, Float_t cos) {
 int xsecBinsHelper::GetBinFromIPS(int inBin){
 	return ips2full[inBin];
 }
-Float_t* GetBinWidths(){
+Float_t* xsecBinsHelper::GetBinWidths(){
 	Float_t* out = new Float_t[19];
 
 	out[0]=(PBins[2]-PBins[1]);
@@ -136,13 +136,13 @@ Float_t* GetBinWidths(){
 		if(ii<7){
 			for(int jj=0; jj<3; jj++){
 				out[tempIndex]=(PBins[ii+1]-PBins[ii]);
-				out[tempIndex]=(CosBins[ii][]-CosBins[ii][]);
+				out[tempIndex]*=(CosBins[ii][jj+2]-CosBins[ii][jj+1]);
 				tempIndex++;
 			}
 		} else {
 			for(int jj=0; jj<2; jj++){
 				out[tempIndex]=(PBins[ii+1]-PBins[ii]);
-				out[tempIndex]=(CosBins[ii][]-CosBins[ii][]);
+				out[tempIndex]*=(CosBins[ii][jj+2]-CosBins[ii][jj+1]);
 				tempIndex++;
 			}
 		}

@@ -1,4 +1,6 @@
 #include <iostream>
+#include "TMath.h"
+
 #include "./xsecBinsHelper.hxx"
 #include "./xsecBinsHelper.cxx"
 
@@ -29,6 +31,25 @@ void testXsecBinsHelper(){
 	if(!wasBinGoodIPS(420,0.85,0,helper))	return;
 	if(!wasBinGoodIPS(650,0.97,4,helper))	return;
 	if(!wasBinGoodIPS(3300,0.99,18,helper))	return;
+
+	Float_t* binWidths = helper->GetBinWidths();
+	if(TMath::Abs(binWidths[0]-(0.1*130))>1e-1) {
+		cout << "BinWidths Fail: 0" << endl;
+		return;
+	}
+	if(TMath::Abs(binWidths[2]-(0.07*140))>1e-1) {
+		cout << "BinWidths Fail: 2" << endl;
+		return;
+	}
+	if(TMath::Abs(binWidths[9]-(0.03*200))>1e-1) {
+		cout << "BinWidths Fail: 9" << endl;
+		return;
+	}
+	if(TMath::Abs(binWidths[17]-(0.03*1400))>1e-1) {
+		cout << "BinWidths Fail: 17" << endl;
+		return;
+	}
+
 
 	cout << "all tests pass, nice work!" << endl;
 	return;
