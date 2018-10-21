@@ -87,7 +87,8 @@ void covMatD::Decompose() {
 	wasDecomposed=true;
 }
 
-// Throw updates the variation vector which is to be directly accessed
+// Throw updates the variation vector which is to be directly accessed.
+// Important Reminder: weight = 1. + variation 
 void covMatD::Throw() {
 	if(!wasDecomposed){
 		cerr << "matrix was not decomposed!!!!!!!" << endl;
