@@ -130,7 +130,7 @@ Float_t* xsecBinsHelper::GetBinWidths(){
 	out[0]=(PBins[2]-PBins[1]);
 	out[0]*=(CosBins[1][2]-CosBins[1][1]);
 	out[1]=(PBins[2]-PBins[1]);
-	out[1]=(CosBins[1][3]-CosBins[1][2]);
+	out[1]*=(CosBins[1][3]-CosBins[1][2]);
 	int tempIndex=2;
 	for(int ii=2; ii<8; ii++){
 		if(ii<7){

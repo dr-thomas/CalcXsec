@@ -23,6 +23,7 @@ covMatD::covMatD(Int_t dimension){
 		matDecomp[ii] = new Double_t[dim];
 	}
 	randN.SetSeed(21344213);
+	wasDecomposed=false;
 }
 covMatD::~covMatD(){
 	for (int ii=0; ii<dim; ii++) {
@@ -83,10 +84,15 @@ void covMatD::Decompose() {
 			matDecomp[ii][jj]=cholU(ii,jj);
 		}
 	}
+	wasDecomposed=true;
 }
 
 // Throw updates the variation vector which is to be directly accessed
 void covMatD::Throw() {
+	if(!wasDecomposed){
+		cerr << "matrix was not decomposed!!!!!!!" << endl;
+		cerr << "Throws will return 0 variations" << endl;
+	}
 	Double_t* randVec = new Double_t[dim];
 	for(int ii=0; ii<dim; ii++){
 		randVec[ii]=randN.Gaus();

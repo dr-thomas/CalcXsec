@@ -30,5 +30,6 @@ class covMatD {
 		Double_t** matDecomp;
 		Int_t dim;
 		TRandom3 randN;
+		bool wasDecomposed;
 };
 #endif

@@ -3,6 +3,8 @@
 #include <TMatrixD.h>
 #include <TTree.h>
 #include <TAxis.h>
+#include <TH1F.h>
+#include <TRandom3.h>
 
 #include "./util/p0dCCEventClass.C"
 #include "./util/GetMCEventRateFromFitIPS.C"
@@ -13,11 +15,13 @@
 //to clone: git clone tcampbell@ens-hpc.engr.colostate.edu:/home/other/tcampbell/git/CalcXsec.git
 
 int GetFluxBinIndex(Float_t);
+bool isInWTFV(Float_t* pos);
 
 void CalcXsec(){
 	//define files
 	TString inFMCGenieStr = "/Users/thomascampbell/p0dCCAnalysis/FitResults/Macros/XsecDrawFiles/GenWithFlagGENIE.root";
-	TString inFMCEffStr = "/Users/thomascampbell/p0dCCAnalysis/FitResults/Macros/XsecDrawFiles/GenWithFlag.root";
+	//TString inFMCEffStr = "/Users/thomascampbell/Desktop/GenCheck/GenWithFlag.root";
+	TString inFMCEffStr = "./GenWithFlag.root";
 	TString inFFitStr = "/Users/thomascampbell/p0dCCAnalysis/FitResults/DataFits/NEUT/fitBaseOutNoReg.root";
 
 	TFile* inFMCEff = new TFile(inFMCEffStr,"OPEN");
@@ -56,16 +60,19 @@ void CalcXsec(){
 			fluxCov->SetMat(ii,jj,(*covInFlux)(ii+30,jj+30));
       }
     }
+	fluxCov->Decompose();
     finFluxCov->Close();
 
 	//fit
 	TMatrixD* covInFit = (TMatrixD*)inFFit->Get("res_cov_matrix");
+	TVectorD* priorVec = (TVectorD*)inFFit->Get("res_vector");
 	covMatD* fitCov = new covMatD(numubBins->GetNbins());
 	for(int ii=0; ii<covInFit->GetNcols(); ii++){
 		for(int jj=0; jj<covInFit->GetNcols(); jj++){
 			fitCov->SetMat(ii,jj,(*covInFit)(ii,jj));
 		}
 	}
+	fitCov->Decompose();
 
 	//intialize results (ngen, nsel, etc) 
 	Float_t** nData = new Float_t*[400];
@@ -76,11 +83,19 @@ void CalcXsec(){
 		nSel[ii] = new Float_t[19];
 		nGen[ii] = new Float_t[19];
 	}
+	for(int iToy=0; iToy<400; iToy++){
+		for(int ii=0; ii<19; ii++){
+			nData[iToy][ii]=0.;
+			nSel[iToy][ii]=0.;
+			nGen[iToy][ii]=0.;
+		}
+	}
 
 	xsecBinsHelper* binHelper = new xsecBinsHelper();
 	//loop over events, loop over toys
 	//generated loop
-	int nToys=10;//max 400
+	int nToys=400;//max 400
+
 	for(int iEntry=0; iEntry<nEntriesTruth; iEntry++){
 		if((iEntry%10000)==0) cout << iEntry*1.0/nEntriesTruth << endl;
 		truthT->GetEntry(iEntry);
@@ -93,64 +108,118 @@ void CalcXsec(){
 
 			Float_t weight=1.0;
 			for(int ii=0; ii<15; ii++){
-				weight*=(*(genEvt->WeightsMatrix))(ii,iToy);
+				weight*=((*(genEvt->WeightsMatrix))(ii,iToy));
 			}
 			weight*=genEvt->weightHL;
+			weight*=genEvt->weightSF2RFG;
 			int fluxBin=GetFluxBinIndex(genEvt->nu_trueE);
 			if(fluxBin<0) continue;
-			weight*=(fluxCov->varVec[fluxBin]);
+			weight*=(1.+(fluxCov->varVec[fluxBin]));
 			if(weight>-1e-6 && weight<10.) nGen[iToy][bin]+=weight;
+			else nGen[iToy][bin]+=1.;
 		}
-		//selected loop
-		if(iEntry<nEntriesD){
-			defaultT->GetEntry(iEntry);
-			int binSel=binHelper->GetBinIPS(selEvt->truelepton_mom, selEvt->truelepton_costheta);
-			if((selEvt->IsOnWater)==1 && binSel>0 && (selEvt->topology)==0 && (selEvt->nu_pdg)==-14) {
-				//TODO: FV cut here!?!?!?
-				fluxCov->SetSeed(134987);
-				for(int iToy=0; iToy<nToys; iToy++){
-					fluxCov->Throw();
-					Float_t weight=1.0;
-					for(int ii=0; ii<15; ii++){
-						weight*=(*(selEvt->WeightsMatrix))(ii,iToy);
-					}
-					weight*=selEvt->weightHL;
-					int fluxBin=GetFluxBinIndex(selEvt->nu_trueE);
-					if(fluxBin<0) continue;
-					weight*=(fluxCov->varVec[fluxBin]);
-					if(weight>-1e-6 && weight<10.) nSel[iToy][binSel]+=weight;
-				}
-			}
-		} // selected events
 	} // iEntry
+	//selected loop
+	for(int iEntry=0; iEntry<nEntriesD; iEntry++){
+		defaultT->GetEntry(iEntry);
+		int binSel=binHelper->GetBinIPS(selEvt->truelepton_mom, selEvt->truelepton_costheta);
+		if((selEvt->IsOnWater)==1 && binSel>-1 && (selEvt->topology)==0 && (selEvt->nu_pdg)==-14 && isInWTFV(selEvt->vtx_truepos)) {
+			fluxCov->SetSeed(134987);
+			for(int iToy=0; iToy<nToys; iToy++){
+				fluxCov->Throw();
+				Float_t weight=1.0;
+				for(int ii=0; ii<15; ii++){
+					weight*=(*(selEvt->WeightsMatrix))(ii,iToy);
+				}
+				weight*=selEvt->weightHL;
+				weight*=selEvt->weightSF2RFG;
+				int fluxBin=GetFluxBinIndex(selEvt->nu_trueE);
+				if(fluxBin<0) continue;
+				weight*=(1.+(fluxCov->varVec[fluxBin]));
+				if(weight>-1e-6 && weight<10.) nSel[iToy][binSel]+=weight;
+				else nSel[iToy][binSel]+=1.;
+			}
+		}
+	} // selected events
 
 	//get data event rates
 	Float_t* nomEvtRate = GetMCEventRateFromFitIPS();
 	fitCov->SetSeed(12334987);
-	for(int iToy=0; iToy<400; iToy++){
+	for(int iToy=0; iToy<nToys; iToy++){
 		fitCov->Throw();
 		for(int ii=0; ii<19; ii++){
-			nData[iToy][ii]=(nomEvtRate[ii]*(fitCov->varVec[binHelper->ips2full[ii]]));
+			nData[iToy][ii]=((*priorVec)(binHelper->ips2full[ii])*nomEvtRate[ii]*(1.+(fitCov->varVec[binHelper->ips2full[ii]])));
 		}
+	}
+
+	//integrated flux
+	//correleted with efficiency using prefit covariacne, no correlations to data
+	TFile* inFflux = new TFile("/Users/thomascampbell/p0dCCAnalysis/FitResults/Macros/tuned13av1.1/run5c/nd5_tuned13av1.1_13anom_run5c_antinumode_fine.root");
+	Double_t FluxBinsPass[12]={0.0,0.4,0.5,0.6,0.7,1.0,1.5,2.5,3.5,5.0,7.0,30.0};
+	TH1F* tempFluxHist = (TH1F*)inFflux->Get("enu_nd5_tuned13a_numub");
+	TH1F* FluxHist = (TH1F*)tempFluxHist->Rebin(11,"FluxHist",FluxBinsPass);
+	Float_t* nomFlux = new Float_t[11];
+	for(int i=0; i<11; i++) nomFlux[i]=(Float_t)FluxHist->GetBinContent(i+1);
+
+	Float_t* intFlux = new Float_t[400];
+	for(int ii=0; ii<400; ii++){
+		intFlux[ii] = 0.;
+	}
+
+	fluxCov->SetSeed(134987);
+	for(int iToy=0; iToy<nToys; iToy++){
+		fluxCov->Throw();
+		for(int ii=0; ii<11; ii++){
+			intFlux[iToy]+=nomFlux[ii]*(1.+(fluxCov->varVec[ii]));
+		}
+	}
+
+	//number of water molequles
+	//1902 kg from TN-82, 0.8% uncertainty
+	Float_t nTargetsNom=6.36e+28;
+	//1930 kg from TN-72
+	Float_t nTargetsNomMC=6.46e+28; 
+	TRandom3 randN;
+	randN.SetSeed(13857993);
+	Float_t* nTargets = new Float_t[400];
+	for(int ii=0; ii<nToys; ii++){
+		nTargets[ii] = (1.+0.008*randN.Gaus())*nTargetsNom;
 	}
 
 	//calc xsec
-	//TODO: nTargets, intFlux...<- should be correlated w/ everything else ???
-	//TODO: binwidth tests!!!!!!!!  you were drunk when you wrote that!
 	suffStat** xsecStat = new suffStat*[19];
+	suffStat** xsecStatNEUT = new suffStat*[19];
 	for(int ii=0; ii<19; ii++){
-		xsecStat[ii] = new suffStat();
+		xsecStat[ii] = new suffStat(1e-39);
+		xsecStatNEUT[ii] = new suffStat(1e-39);
 	}
-	for(int iToy=0; iToy<400; iToy++){
+	Float_t* binWidth = binHelper->GetBinWidths();
+
+	for(int iToy=0; iToy<nToys; iToy++){
 		for(int ii=0; ii<19; ii++){
 			Float_t xsec = nData[iToy][ii]/(nSel[iToy][ii]/nGen[iToy][ii]);
-			//xsec*=1.0/intFlux[iToy];
-			//xsec*=1.0/nTargets[iToy];
-			//xsec*=1.0/binWidth[ii];
+			xsec*=1.0/binWidth[ii];
+			xsec*=1.0/intFlux[iToy];
+			xsec*=1.0/nTargets[iToy];
+			xsec*=1.0/2.08;
+			xsecStat[ii]->Fill(xsec);
+			xsec = nGen[iToy][ii]/(binWidth[ii]*intFlux[iToy]);
+			xsec*=1.0/nTargetsNomMC;
+			xsec*=1.0/2.08;
+			xsecStatNEUT[ii]->Fill(xsec);
 		}
 	}
 
+	//calc final cov matrix 
+
+	cout << "xsec results in data (x+-error | NEUT): " << endl;
+	for(int ii=0; ii<19; ii++){
+		cout << xsecStat[ii]->GetMean() << " +- " << xsecStat[ii]->GetRMS();
+		cout << " | " << xsecStatNEUT[ii]->GetMean() << endl;
+	}
 	//draw results
+	//for drawing, copy and paste gross code into new macro and pass around 
+	//the nesseary calculated stuff 
 }
 
 int GetFluxBinIndex(Float_t nuE){
@@ -165,3 +234,6 @@ int GetFluxBinIndex(Float_t nuE){
 	return (out-1);
 }
 
+bool isInWTFV(Float_t* pos){
+	return (pos[0]>-836. && pos[0]<764. && pos[1]>-871. && pos[1]<869. && pos[2]>-2968 && pos[2]<-1264);
+}

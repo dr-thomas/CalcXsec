@@ -1,2 +1,4 @@
 *_C*
 DrawXsecFast.C
+*.root
+GenWithFlagCheck.C

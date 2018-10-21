@@ -12,6 +12,7 @@ class p0dCCEvent {
 		Float_t* vtx_truepos;//4
 		Int_t IsOnWater;
 		Float_t weightHL;
+		Float_t weightSF2RFG;
 
 		p0dCCEvent() {
 			WeightsMatrix = new TMatrixD(15,400);
@@ -23,6 +24,7 @@ class p0dCCEvent {
 			vtx_truepos = new Float_t[4];
 			IsOnWater=-1;
 			weightHL=-1;
+			weightSF2RFG=-1.;
 		}
 		~p0dCCEvent() {
 			delete []vtx_truepos;
@@ -33,6 +35,7 @@ class p0dCCEvent {
 			if(!isGENIE){
 				inT->SetBranchAddress("WeightsMatrix",&WeightsMatrix);
 				inT->SetBranchAddress("weight",&weightHL);
+				inT->SetBranchAddress("weightSF2RFG",&weightSF2RFG);
 			}
 			inT->SetBranchAddress("topology",&topology);
 			inT->SetBranchAddress("nu_pdg",&nu_pdg);
