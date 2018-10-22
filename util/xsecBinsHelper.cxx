@@ -6,18 +6,14 @@
 //
 //Oct. 18, 2018
 //Author: Thomas Campbell <thomascampbell1@gmail.com>
-//
-//TODO:
-// - bin width
-
 
 xsecBinsHelper::xsecBinsHelper(){
 	Float_t initPBins[10]={0,400,530,670,800,1000,1380,2010,3410,50000};
 	Float_t initCosBins[9][5]={
 		{-1,1,1,1,1},//only one bin here
 		{-1,0.84,0.94,1,1},//only three bins here
-		{-1,0.85,0.92,0.96,1},//Col. Forbins...
-		{-1,0.88,0.93,0.97,1},
+		{-1,0.85,0.92,0.96,1},//four bins
+		{-1,0.88,0.93,0.97,1},//Col. Forbins...
 		{-1,0.90,0.94,0.97,1},
 		{-1,0.91,0.95,0.97,1},
 		{-1,0.94,0.97,0.98,1},
