@@ -12,6 +12,7 @@
 #include "./covmat/covmat.cxx"
 #include "./util/suffstat.hxx"
 #include "./util/suffstat.cxx"
+#include "./draw/DrawXsec.C"
 //to clone: git clone tcampbell@ens-hpc.engr.colostate.edu:/home/other/tcampbell/git/CalcXsec.git
 
 int GetFluxBinIndex(Float_t);
@@ -66,7 +67,7 @@ void CalcXsec(){
 	//fit
 	TMatrixD* covInFit = (TMatrixD*)inFFit->Get("res_cov_matrix");
 	TVectorD* priorVec = (TVectorD*)inFFit->Get("res_vector");
-	covMatD* fitCov = new covMatD(numubBins->GetNbins());
+	covMatD* fitCov = new covMatD(covInFit->GetNcols());
 	for(int ii=0; ii<covInFit->GetNcols(); ii++){
 		for(int jj=0; jj<covInFit->GetNcols(); jj++){
 			fitCov->SetMat(ii,jj,(*covInFit)(ii,jj));
@@ -168,7 +169,7 @@ void CalcXsec(){
 	for(int iToy=0; iToy<nToys; iToy++){
 		fluxCov->Throw();
 		for(int ii=0; ii<11; ii++){
-			intFlux[iToy]+=nomFlux[ii]*(1.+(fluxCov->varVec[ii]));
+			intFlux[iToy]+=(nomFlux[ii]*(1.+(fluxCov->varVec[ii]))*2.08);
 		}
 	}
 
@@ -184,38 +185,10 @@ void CalcXsec(){
 		nTargets[ii] = (1.+0.008*randN.Gaus())*nTargetsNom;
 	}
 
-	//calc xsec
-	suffStat** xsecStat = new suffStat*[19];
-	suffStat** xsecStatNEUT = new suffStat*[19];
-	for(int ii=0; ii<19; ii++){
-		xsecStat[ii] = new suffStat(1e-39);
-		xsecStatNEUT[ii] = new suffStat(1e-39);
-	}
 	Float_t* binWidth = binHelper->GetBinWidths();
 
-	for(int iToy=0; iToy<nToys; iToy++){
-		for(int ii=0; ii<19; ii++){
-			Float_t xsec = nData[iToy][ii]/(nSel[iToy][ii]/nGen[iToy][ii]);
-			xsec*=1.0/binWidth[ii];
-			xsec*=1.0/intFlux[iToy];
-			xsec*=1.0/nTargets[iToy];
-			xsec*=1.0/2.08;
-			xsecStat[ii]->Fill(xsec);
-			xsec = nGen[iToy][ii]/(binWidth[ii]*intFlux[iToy]);
-			xsec*=1.0/nTargetsNomMC;
-			xsec*=1.0/2.08;
-			xsecStatNEUT[ii]->Fill(xsec);
-		}
-	}
-
-	//calc final cov matrix 
-
-	cout << "xsec results in data (x+-error | NEUT): " << endl;
-	for(int ii=0; ii<19; ii++){
-		cout << xsecStat[ii]->GetMean() << " +- " << xsecStat[ii]->GetRMS();
-		cout << " | " << xsecStatNEUT[ii]->GetMean() << endl;
-	}
 	//draw results
+	DrawXsec(nData,nSel,nGen,binWidth,intFlux,nTargets,nTargetsNomMC,nToys);
 	//for drawing, copy and paste gross code into new macro and pass around 
 	//the nesseary calculated stuff 
 	//-> or just take style stuff and write better/neater 

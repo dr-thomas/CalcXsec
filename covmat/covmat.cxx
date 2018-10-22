@@ -9,6 +9,10 @@
 
 // covMatD has covariance matrix throwing utilities 
 //
+// Note: be very careful with varVec, directly accessing an array, no warning if
+//       the user tries to access an elemet that does not exist! (TODO, should 
+//       probably do something about this...)
+//
 //Oct. 18, 2018
 //Author: Thomas Campbell <thomascampbell1@gmail.com>
 //
@@ -38,6 +42,7 @@ covMatD::~covMatD(){
 // Setting stuff
 void covMatD::SetMat(Int_t ii, Int_t jj, Double_t val) {
 	if (ii>=dim || jj>=dim) {
+		cerr << "he's a very bad man (add index larger than covMat dim)" << endl;
 		return;
 	}
 	mat[ii][jj]=val;

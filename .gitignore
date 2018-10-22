@@ -2,3 +2,5 @@
 DrawXsecFast.C
 *.root
 GenWithFlagCheck.C
+.DS_Store
+plots/*.pdf
