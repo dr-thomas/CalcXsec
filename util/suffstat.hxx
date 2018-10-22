@@ -10,6 +10,7 @@ class suffStat {
 		Float_t GetMean();
 		Float_t GetRMS();
 		void Dump();
+		void Reset();
 	private:
 		Float_t sx;
 		Float_t sxx;

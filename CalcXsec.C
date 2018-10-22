@@ -113,8 +113,7 @@ void CalcXsec(){
 			weight*=genEvt->weightHL;
 			weight*=genEvt->weightSF2RFG;
 			int fluxBin=GetFluxBinIndex(genEvt->nu_trueE);
-			if(fluxBin<0) continue;
-			weight*=(1.+(fluxCov->varVec[fluxBin]));
+			if(fluxBin>-1) weight*=(1.+(fluxCov->varVec[fluxBin]));
 			if(weight>-1e-6 && weight<10.) nGen[iToy][bin]+=weight;
 			else nGen[iToy][bin]+=1.;
 		}
@@ -134,8 +133,7 @@ void CalcXsec(){
 				weight*=selEvt->weightHL;
 				weight*=selEvt->weightSF2RFG;
 				int fluxBin=GetFluxBinIndex(selEvt->nu_trueE);
-				if(fluxBin<0) continue;
-				weight*=(1.+(fluxCov->varVec[fluxBin]));
+				if(fluxBin>-1) weight*=(1.+(fluxCov->varVec[fluxBin]));
 				if(weight>-1e-6 && weight<10.) nSel[iToy][binSel]+=weight;
 				else nSel[iToy][binSel]+=1.;
 			}
@@ -220,6 +218,7 @@ void CalcXsec(){
 	//draw results
 	//for drawing, copy and paste gross code into new macro and pass around 
 	//the nesseary calculated stuff 
+	//-> or just take style stuff and write better/neater 
 }
 
 int GetFluxBinIndex(Float_t nuE){

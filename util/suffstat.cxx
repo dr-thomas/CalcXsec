@@ -33,3 +33,9 @@ void suffStat::Dump(){
 	cout << "Sx2:" << sxx << endl;
 	cout << "Sx3:" << sxxx << endl;
 }
+void suffStat::Reset(){
+	sx=0.;
+	sxx=0.;
+	sxxx=0.;
+	n=0.;
+}
