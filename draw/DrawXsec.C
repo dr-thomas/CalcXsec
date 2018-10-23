@@ -4,25 +4,88 @@
 #include <TLegend.h>
 #include <TStyle.h>
 
-void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t* binWidth, Float_t* intFlux, Float_t* nTargets, Float_t nTargetsNomMC, int nToys){
+void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF, Float_t* binWidth, Float_t* intFlux, Float_t* nTargets, Float_t nTargetsNomMC, int nToys){
 	//calc xsec
 	suffStat** xsecStat = new suffStat*[19];
 	suffStat** xsecStatNEUT = new suffStat*[19];
+	suffStat** xsecStatNEUTSF = new suffStat*[19];
 	for(int ii=0; ii<19; ii++){
 		xsecStat[ii] = new suffStat(1e-39);
 		xsecStatNEUT[ii] = new suffStat(1e-39);
+		xsecStatNEUTSF[ii] = new suffStat(1e-39);
+	}
+	suffStat** xsecMomStat = new suffStat*[7];
+	suffStat** xsecMomStatNEUT = new suffStat*[7];
+	suffStat** xsecMomStatNEUTSF = new suffStat*[7];
+	for(int ii=0; ii<7; ii++){
+		xsecMomStat[ii] = new suffStat(1e-39);
+		xsecMomStatNEUT[ii] = new suffStat(1e-39);
+		xsecMomStatNEUTSF[ii] = new suffStat(1e-39);
+	}
+	Float_t* singleBin = new Float_t[400];
+	Float_t* singleBinN = new Float_t[400];
+	Float_t* singleBinNSF = new Float_t[400];
+	for(int ii=0; ii<nToys; ii++){
+		singleBin[ii]=0.;
+		singleBinN[ii]=0.;
+		singleBinNSF[ii]=0.;
 	}
 
+	//TODO: single diff shit is sloppy af, should re-write
+
 	for(int iToy=0; iToy<nToys; iToy++){
+		Float_t xsecMom=0.;
+		Float_t xsecMomN=0.;
+		Float_t xsecMomNSF=0.;
+		int nBinsMom=2;
+		int nDrawnP=0;
+		int pIndex=0;
 		for(int ii=0; ii<19; ii++){
 			Float_t xsec = nData[iToy][ii]/(nSel[iToy][ii]/nGen[iToy][ii]);
 			xsec*=1.0/binWidth[ii];
 			xsec*=1.0/intFlux[iToy];
 			xsec*=1.0/nTargets[iToy];
 			xsecStat[ii]->Fill(xsec);
-			xsec = nGen[iToy][ii]/(binWidth[ii]*intFlux[iToy]);
-			xsec*=1.0/nTargetsNomMC;
-			xsecStatNEUT[ii]->Fill(xsec);
+			singleBin[iToy]+=xsec;
+			Float_t xsecN = nGen[iToy][ii]/(binWidth[ii]*intFlux[iToy]);
+			Float_t xsecNSF = nGenSF[iToy][ii]/(binWidth[ii]*intFlux[iToy]);
+			xsecN*=1.0/nTargetsNomMC;
+			xsecNSF*=1.0/nTargetsNomMC;
+			xsecStatNEUT[ii]->Fill(xsecN);
+			xsecStatNEUTSF[ii]->Fill(xsecNSF);
+			singleBinN[iToy]+=xsecN;
+			singleBinNSF[iToy]+=xsecNSF;
+			//Momentum single (Note: not normalized by bin width)
+			xsec*=binWidth[ii];
+			xsecN*=binWidth[ii];
+			xsecNSF*=binWidth[ii];
+			if(nDrawnP<nBinsMom){
+				xsecMom+=xsec;
+				xsecMomN+=xsecN;
+				xsecMomNSF+=xsecNSF;
+				nDrawnP++;
+				if(ii==18) {
+					xsecMomStat[pIndex]->Fill(xsecMom);
+					xsecMomStatNEUT[pIndex]->Fill(xsecMomN);
+					xsecMomStatNEUTSF[pIndex]->Fill(xsecMomNSF);
+				}
+			} else {
+				nDrawnP=0;
+				xsecMomStat[pIndex]->Fill(xsecMom);
+				xsecMomStatNEUT[pIndex]->Fill(xsecMomN);
+				xsecMomStatNEUTSF[pIndex]->Fill(xsecMomNSF);
+				xsecMom=0.;
+				xsecMomN=0.;
+				xsecMomNSF=0.;
+				pIndex++;
+				if(ii==16) nBinsMom=2;
+				else nBinsMom=3;
+				//add again
+				xsecMom+=xsec;
+				xsecMomN+=xsecN;
+				xsecMomNSF+=xsecNSF;
+				nDrawnP++;
+			}
 		}
 	}
 
@@ -33,6 +96,19 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t* binWidth
 		cout << xsecStat[ii]->GetMean() << " +- " << xsecStat[ii]->GetRMS();
 		cout << " | " << xsecStatNEUT[ii]->GetMean() << endl;
 	}
+
+	suffStat* sbStat = new suffStat(1e-39);
+	suffStat* sbStatN = new suffStat(1e-39);
+	suffStat* sbStatNSF = new suffStat(1e-39);
+	for(int ii=0; ii<nToys; ii++){
+		sbStat->Fill(singleBin[ii]);
+		sbStatN->Fill(singleBinN[ii]);
+		sbStatNSF->Fill(singleBinNSF[ii]);
+	}
+	cout << "Single Bin Results:" << endl;
+	cout << "Data: " << sbStat->GetMean() << " +- " << sbStat->GetRMS() << endl;
+	cout << "NEUT: " << sbStatN->GetMean() << endl;
+	cout << "NEUT SF: " << sbStatNSF->GetMean() << endl;
 
 	cout << "Drawing Cross Section Plots" << endl;
 
@@ -64,6 +140,15 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t* binWidth
 	TH1F* CosHistNEUT5 = new TH1F("CosHistNEUT5","",3,CosBinDraw[5]);
 	TH1F* CosHistNEUT6 = new TH1F("CosHistNEUT6","",3,CosBinDraw[6]);
 	TH1F* CosHistNEUT7 = new TH1F("CosHistNEUT7","",2,CosBinDraw[7]);
+
+	TH1F* CosHistNEUTSF1 = new TH1F("CosHistNEUTSF1","",2,CosBinDraw[1]);
+	TH1F* CosHistNEUTSF2 = new TH1F("CosHistNEUTSF2","",3,CosBinDraw[2]);
+	TH1F* CosHistNEUTSF3 = new TH1F("CosHistNEUTSF3","",3,CosBinDraw[3]);
+	TH1F* CosHistNEUTSF4 = new TH1F("CosHistNEUTSF4","",3,CosBinDraw[4]);
+	TH1F* CosHistNEUTSF5 = new TH1F("CosHistNEUTSF5","",3,CosBinDraw[5]);
+	TH1F* CosHistNEUTSF6 = new TH1F("CosHistNEUTSF6","",3,CosBinDraw[6]);
+	TH1F* CosHistNEUTSF7 = new TH1F("CosHistNEUTSF7","",2,CosBinDraw[7]);
+
 
 	TLegend* leg = new TLegend(0.7,0.7,0.9,0.9);
 
@@ -139,6 +224,34 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t* binWidth
 	CosHistNEUT7->SetBinContent(1,xsecStatNEUT[17]->GetMean());
 	CosHistNEUT7->SetBinContent(2,xsecStatNEUT[18]->GetMean());
 
+	//NEUTSF
+	CosHistNEUTSF1->SetBinContent(1,xsecStatNEUTSF[0]->GetMean());
+	CosHistNEUTSF1->SetBinContent(2,xsecStatNEUTSF[1]->GetMean());
+
+	CosHistNEUTSF2->SetBinContent(1,xsecStatNEUTSF[2]->GetMean());
+	CosHistNEUTSF2->SetBinContent(2,xsecStatNEUTSF[3]->GetMean());
+	CosHistNEUTSF2->SetBinContent(3,xsecStatNEUTSF[4]->GetMean());
+
+	CosHistNEUTSF3->SetBinContent(1,xsecStatNEUTSF[5]->GetMean());
+	CosHistNEUTSF3->SetBinContent(2,xsecStatNEUTSF[6]->GetMean());
+	CosHistNEUTSF3->SetBinContent(3,xsecStatNEUTSF[7]->GetMean());
+
+	CosHistNEUTSF4->SetBinContent(1,xsecStatNEUTSF[8]->GetMean());
+	CosHistNEUTSF4->SetBinContent(2,xsecStatNEUTSF[9]->GetMean());
+	CosHistNEUTSF4->SetBinContent(3,xsecStatNEUTSF[10]->GetMean());
+
+	CosHistNEUTSF5->SetBinContent(1,xsecStatNEUTSF[11]->GetMean());
+	CosHistNEUTSF5->SetBinContent(2,xsecStatNEUTSF[12]->GetMean());
+	CosHistNEUTSF5->SetBinContent(3,xsecStatNEUTSF[13]->GetMean());
+
+	CosHistNEUTSF6->SetBinContent(1,xsecStatNEUTSF[14]->GetMean());
+	CosHistNEUTSF6->SetBinContent(2,xsecStatNEUTSF[15]->GetMean());
+	CosHistNEUTSF6->SetBinContent(3,xsecStatNEUTSF[16]->GetMean());
+
+	CosHistNEUTSF7->SetBinContent(1,xsecStatNEUTSF[17]->GetMean());
+	CosHistNEUTSF7->SetBinContent(2,xsecStatNEUTSF[18]->GetMean());
+
+
 	//Cos by momentum slice 
 	TString PBinsStr[9]={"0","400","530","670","800","1000","1380","2010","3410"};
 	TString CosTitleStr;
@@ -166,12 +279,18 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t* binWidth
 	CosHistNEUT1->SetLineColor(kRed+2);
 	CosHistNEUT1->SetLineStyle(7);
 
+	CosHistNEUTSF1->SetLineColor(kGreen+2);
+	CosHistNEUTSF1->SetLineStyle(7);
+
+
 	leg = new TLegend(0.1,0.1,0.9,0.9);
 	leg->AddEntry(CosHist1,"Post Fit MC","pel");
 	leg->AddEntry(CosHistNEUT1,"Pre Fit MC (NEUT)","l");
+	leg->AddEntry(CosHistNEUTSF1,"Pre Fit MC (NEUT SF)","l");
 
 	CosHist1->Draw("PE0");
 	CosHistNEUT1->Draw("same");
+	CosHistNEUTSF1->Draw("same");
 	c->Print("./plots/CosByMom1.pdf");
 
 	c = new TCanvas;
@@ -199,8 +318,13 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t* binWidth
 	CosHistNEUT2->SetLineColor(kRed+2);
 	CosHistNEUT2->SetLineStyle(7);
 
+	CosHistNEUTSF2->SetLineColor(kGreen+2);
+	CosHistNEUTSF2->SetLineStyle(7);
+
+
 	CosHist2->Draw("PE0");
 	CosHistNEUT2->Draw("same");
+	CosHistNEUTSF2->Draw("same");
 	c->Print("./plots/CosByMom2.pdf");
 
 	//3
@@ -224,8 +348,12 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t* binWidth
 	CosHistNEUT3->SetLineColor(kRed+2);
 	CosHistNEUT3->SetLineStyle(7);
 
+	CosHistNEUTSF3->SetLineColor(kGreen+2);
+	CosHistNEUTSF3->SetLineStyle(7);
+
 	CosHist3->Draw("PE0");
 	CosHistNEUT3->Draw("same");
+	CosHistNEUTSF3->Draw("same");
 	c->Print("./plots/CosByMom3.pdf");
 
 	//4
@@ -249,8 +377,12 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t* binWidth
 	CosHistNEUT4->SetLineColor(kRed+2);
 	CosHistNEUT4->SetLineStyle(7);
 
+	CosHistNEUTSF4->SetLineColor(kGreen+2);
+	CosHistNEUTSF4->SetLineStyle(7);
+
 	CosHist4->Draw("PE0");
 	CosHistNEUT4->Draw("same");
+	CosHistNEUTSF4->Draw("same");
 	c->Print("./plots/CosByMom4.pdf");
 
 	//5
@@ -274,8 +406,12 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t* binWidth
 	CosHistNEUT5->SetLineColor(kRed+2);
 	CosHistNEUT5->SetLineStyle(7);
 
+	CosHistNEUTSF5->SetLineColor(kGreen+2);
+	CosHistNEUTSF5->SetLineStyle(7);
+
 	CosHist5->Draw("PE0");
 	CosHistNEUT5->Draw("same");
+	CosHistNEUTSF5->Draw("same");
 	c->Print("./plots/CosByMom5.pdf");
 
 	//6
@@ -300,8 +436,12 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t* binWidth
 	CosHistNEUT6->SetLineColor(kRed+2);
 	CosHistNEUT6->SetLineStyle(7);
 
+	CosHistNEUTSF6->SetLineColor(kGreen+2);
+	CosHistNEUTSF6->SetLineStyle(7);
+
 	CosHist6->Draw("PE0");
 	CosHistNEUT6->Draw("same");
+	CosHistNEUTSF6->Draw("same");
 	c->Print("./plots/CosByMom6.pdf");
 
 	//7
@@ -325,8 +465,52 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t* binWidth
 	CosHistNEUT7->SetLineColor(kRed+2);
 	CosHistNEUT7->SetLineStyle(7);
 
+	CosHistNEUTSF7->SetLineColor(kGreen+2);
+	CosHistNEUTSF7->SetLineStyle(7);
+
 	CosHist7->Draw("PE0");
 	CosHistNEUT7->Draw("same");
+	CosHistNEUTSF7->Draw("same");
 	c->Print("./plots/CosByMom7.pdf");
 
+	// single diff
+	Float_t PBinsDraw[8]={400,530,670,800,1000,1380,2010,3410};
+	Float_t* PBinWidths = new Float_t[7];
+	for(int ii=0; ii<7; ii++){
+		PBinWidths[ii]=(PBinsDraw[ii+1]-PBinsDraw[ii]);
+	}
+	TH1F* MomFitResult = new TH1F("MomFitResult","",7,PBinsDraw);
+	TH1F* MomFitResultNEUT = new TH1F("MomFitResultNEUT","",7,PBinsDraw);
+	TH1F* MomFitResultNEUTSF = new TH1F("MomFitResultNEUTSF","",7,PBinsDraw);
+	for(int ii=0; ii<7; ii++){
+		MomFitResult->SetBinContent(ii+1, xsecMomStat[ii]->GetMean()/PBinWidths[ii]);
+		MomFitResult->SetBinError(ii+1, xsecMomStat[ii]->GetRMS()/PBinWidths[ii]);
+		MomFitResultNEUT->SetBinContent(ii+1, xsecMomStatNEUT[ii]->GetMean()/PBinWidths[ii]);
+		MomFitResultNEUTSF->SetBinContent(ii+1, xsecMomStatNEUTSF[ii]->GetMean()/PBinWidths[ii]);
+	}
+
+	c = new TCanvas;
+	gPad->SetLeftMargin(0.15); //left margin is 15 per cent of the pad width
+	MomFitResult->GetYaxis()->SetTitleOffset(1.4);
+
+	MomFitResult->GetXaxis()->SetTitle("sel. #mu^{+} momentum (MeV/c)");
+	MomFitResult->GetYaxis()->SetTitle("#frac{d#sigma}{dp} (cm^{2}/MeV/H_{2}O molecule)");
+	MomFitResult->SetMarkerStyle(8);
+	MomFitResult->SetMarkerSize(1);
+	MomFitResult->SetMarkerColor(kBlue+3);
+	MomFitResultNEUT->SetLineColor(kRed+2);
+	MomFitResultNEUT->SetLineStyle(7);
+	MomFitResultNEUTSF->SetLineColor(kGreen+2);
+	MomFitResultNEUTSF->SetLineStyle(7);
+
+	leg = new TLegend(0.7,0.7,0.9,0.9);
+	leg->AddEntry(MomFitResult,"Post Fit MC","pel");
+	leg->AddEntry(MomFitResultNEUT,"Pre Fit MC (NEUT)","l");
+	leg->AddEntry(MomFitResultNEUTSF,"Pre Fit MC (NEUT SF)","l");
+
+	MomFitResult->Draw("PE0");
+	MomFitResultNEUT->Draw("same");
+	MomFitResultNEUTSF->Draw("same");
+	leg->Draw("same");
+	c->Print("./plots/MomOverlay.pdf");
 }

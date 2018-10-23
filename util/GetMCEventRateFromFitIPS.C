@@ -3,7 +3,7 @@
 
 Float_t* GetMCEventRateFromFitIPS(){
 
-	TString inFMCStr = "/Users/thomascampbell/p0dCCAnalysis/FitResults/Macros/XsecDrawFiles/WaterSubFullNom.root";
+	TString inFMCStr = "./WaterSubFullNom.root";
 	TFile* inFMC = new TFile(inFMCStr,"OPEN");
 	TTree* selTreeMC = (TTree*)inFMC->Get("selectedEvents");
 

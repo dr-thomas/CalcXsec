@@ -79,16 +79,19 @@ void CalcXsec(){
 	Float_t** nData = new Float_t*[400];
 	Float_t** nSel = new Float_t*[400];
 	Float_t** nGen = new Float_t*[400];
+	Float_t** nGenSF = new Float_t*[400];
 	for(int ii=0; ii<400; ii++){
 		nData[ii] = new Float_t[19];
 		nSel[ii] = new Float_t[19];
 		nGen[ii] = new Float_t[19];
+		nGenSF[ii] = new Float_t[19];
 	}
 	for(int iToy=0; iToy<400; iToy++){
 		for(int ii=0; ii<19; ii++){
 			nData[iToy][ii]=0.;
 			nSel[iToy][ii]=0.;
 			nGen[iToy][ii]=0.;
+			nGenSF[iToy][ii]=0.;
 		}
 	}
 
@@ -112,9 +115,11 @@ void CalcXsec(){
 				weight*=((*(genEvt->WeightsMatrix))(ii,iToy));
 			}
 			weight*=genEvt->weightHL;
-			weight*=genEvt->weightSF2RFG;
 			int fluxBin=GetFluxBinIndex(genEvt->nu_trueE);
 			if(fluxBin>-1) weight*=(1.+(fluxCov->varVec[fluxBin]));
+			if(weight>-1e-6 && weight<10.) nGenSF[iToy][bin]+=weight;
+			else nGenSF[iToy][bin]+=1.;
+			weight*=genEvt->weightSF2RFG;
 			if(weight>-1e-6 && weight<10.) nGen[iToy][bin]+=weight;
 			else nGen[iToy][bin]+=1.;
 		}
@@ -142,6 +147,10 @@ void CalcXsec(){
 	} // selected events
 
 	//get data event rates
+	////TODO: what to use here?  Fits should probably be re-ran with SF-RFG tuning, 
+	//        see if there is a difference.  Pre-Fit MC comparisons from before 
+	//        should not have tunings applied... then it is ok to do what was done
+	//        before: average over toys of NSel
 	Float_t* nomEvtRate = GetMCEventRateFromFitIPS();
 	fitCov->SetSeed(12334987);
 	for(int iToy=0; iToy<nToys; iToy++){
@@ -188,7 +197,7 @@ void CalcXsec(){
 	Float_t* binWidth = binHelper->GetBinWidths();
 
 	//draw results
-	DrawXsec(nData,nSel,nGen,binWidth,intFlux,nTargets,nTargetsNomMC,nToys);
+	DrawXsec(nData,nSel,nGen,nGenSF,binWidth,intFlux,nTargets,nTargetsNomMC,nToys);
 	//for drawing, copy and paste gross code into new macro and pass around 
 	//the nesseary calculated stuff 
 	//-> or just take style stuff and write better/neater 
