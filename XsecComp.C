@@ -12,22 +12,22 @@
 #include "./covmat/covmat.cxx"
 #include "./util/suffstat.hxx"
 #include "./util/suffstat.cxx"
-#include "./draw/DrawXsec.C"
+#include "./draw/DrawXsecSFFitComp.C"
 //to clone: git clone tcampbell@ens-hpc.engr.colostate.edu:/home/other/tcampbell/git/CalcXsec.git
 
 int GetFluxBinIndex(Float_t);
 bool isInWTFV(Float_t* pos);
 
-void CalcXsec(){
+void XsecComp(){
 	//define files
-	TString inFMCGenieStr = "/Users/thomascampbell/p0dCCAnalysis/FitResults/Macros/XsecDrawFiles/GenWithFlagGENIE.root";
 	//TString inFMCEffStr = "/Users/thomascampbell/Desktop/GenCheck/GenWithFlag.root";
 	TString inFMCEffStr = "./GenWithFlag.root";
 	TString inFFitStr = "/Users/thomascampbell/p0dCCAnalysis/FitResults/DataFits/NEUT/fitBaseOutNoReg.root";
+	TString inFFitStrSF = "/Users/thomascampbell/p0dCCAnalysis/FitResults/DataFits/NEUT/SFTuned/fitBaseOutNoReg.root";
 
 	TFile* inFMCEff = new TFile(inFMCEffStr,"OPEN");
-	TFile* inFMCGenie = new TFile(inFMCGenieStr,"OPEN");
 	TFile* inFFit = new TFile(inFFitStr,"OPEN");
+	TFile* inFFitSF = new TFile(inFFitStrSF,"OPEN");
 
 	//define trees
 	TTree* truthT = (TTree*)inFMCEff->Get("outTtruth");
@@ -39,14 +39,6 @@ void CalcXsec(){
 	p0dCCEvent* selEvt = new p0dCCEvent();
 	selEvt->SetBranchAddresses(defaultT, false, false);
 	int nEntriesD = defaultT->GetEntries();
-
-	//Genie
-	//TODO: add weight to Genie stuff, re-produce those comparisions...
-	//(is there even flux weighting for GENIE MC?!?!)
-	TTree* truthTG = (TTree*)inFMCGenie->Get("outTtruth");
-	p0dCCEvent* genEvtGENIE = new p0dCCEvent();
-	genEvtGENIE->SetBranchAddresses(truthTG, true, true);
-	int nEntriesTruthG = truthTG->GetEntries();
 
 	//set up cov matrices 
 	
@@ -75,23 +67,34 @@ void CalcXsec(){
 	}
 	fitCov->Decompose();
 
+	//fit
+	TMatrixD* covInFitSF = (TMatrixD*)inFFitSF->Get("res_cov_matrix");
+	TVectorD* priorVecSF = (TVectorD*)inFFitSF->Get("res_vector");
+	covMatD* fitCovSF = new covMatD(covInFitSF->GetNcols());
+	for(int ii=0; ii<covInFitSF->GetNcols(); ii++){
+		for(int jj=0; jj<covInFitSF->GetNcols(); jj++){
+			fitCovSF->SetMat(ii,jj,(*covInFitSF)(ii,jj));
+		}
+	}
+	fitCovSF->Decompose();
+
 	//intialize results (ngen, nsel, etc) 
 	Float_t** nData = new Float_t*[400];
+	Float_t** nDataSF = new Float_t*[400];
 	Float_t** nSel = new Float_t*[400];
 	Float_t** nGen = new Float_t*[400];
-	Float_t** nGenSF = new Float_t*[400];
 	for(int ii=0; ii<400; ii++){
 		nData[ii] = new Float_t[19];
+		nDataSF[ii] = new Float_t[19];
 		nSel[ii] = new Float_t[19];
 		nGen[ii] = new Float_t[19];
-		nGenSF[ii] = new Float_t[19];
 	}
 	for(int iToy=0; iToy<400; iToy++){
 		for(int ii=0; ii<19; ii++){
 			nData[iToy][ii]=0.;
+			nDataSF[iToy][ii]=0.;
 			nSel[iToy][ii]=0.;
 			nGen[iToy][ii]=0.;
-			nGenSF[iToy][ii]=0.;
 		}
 	}
 
@@ -117,8 +120,6 @@ void CalcXsec(){
 			weight*=genEvt->weightHL;
 			int fluxBin=GetFluxBinIndex(genEvt->nu_trueE);
 			if(fluxBin>-1) weight*=(1.+(fluxCov->varVec[fluxBin]));
-			if(weight>-1e-6 && weight<10.) nGenSF[iToy][bin]+=weight;
-			else nGenSF[iToy][bin]+=1.;
 			weight*=genEvt->weightSF2RFG;
 			if(weight>-1e-6 && weight<10.) nGen[iToy][bin]+=weight;
 			else nGen[iToy][bin]+=1.;
@@ -147,7 +148,7 @@ void CalcXsec(){
 	} // selected events
 
 	//get data event rates
-	Float_t* nomEvtRate = GetMCEventRateFromFitIPS("./WaterSubFullNom.root");
+	Float_t* nomEvtRate = GetMCEventRateFromFitIPS("./SFTunedFitFiles/WaterSubFullNom.root");
 	fitCov->SetSeed(12334987);
 	for(int iToy=0; iToy<nToys; iToy++){
 		fitCov->Throw();
@@ -155,6 +156,18 @@ void CalcXsec(){
 			nData[iToy][ii]=((*priorVec)(binHelper->ips2full[ii])*nomEvtRate[ii]*(1.+(fitCov->varVec[binHelper->ips2full[ii]])));
 		}
 	}
+
+	//get data event rates
+	Float_t* nomEvtRateSF = GetMCEventRateFromFitIPS("./SFTunedFitFiles/WaterSubFullNomSFTuned.root");
+	fitCovSF->SetSeed(12334987);
+	for(int iToy=0; iToy<nToys; iToy++){
+		fitCovSF->Throw();
+		for(int ii=0; ii<19; ii++){
+			nDataSF[iToy][ii]=((*priorVecSF)(binHelper->ips2full[ii])*nomEvtRateSF[ii]*(1.+(fitCovSF->varVec[binHelper->ips2full[ii]])));
+		}
+	}
+
+
 
 	//integrated flux
 	//correleted with efficiency using prefit covariacne, no correlations to data
@@ -193,7 +206,7 @@ void CalcXsec(){
 	Float_t* binWidth = binHelper->GetBinWidths();
 
 	//draw results
-	DrawXsec(nData,nSel,nGen,nGenSF,binWidth,intFlux,nTargets,nTargetsNomMC,nToys);
+	DrawXsecSFFitComp(nData,nDataSF,nSel,nGen,binWidth,intFlux,nTargets,nTargetsNomMC,nToys);
 	//for drawing, copy and paste gross code into new macro and pass around 
 	//the nesseary calculated stuff 
 	//-> or just take style stuff and write better/neater 

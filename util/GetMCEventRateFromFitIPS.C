@@ -1,9 +1,8 @@
 #include "./xsecBinsHelper.hxx"
 #include "./xsecBinsHelper.cxx"
 
-Float_t* GetMCEventRateFromFitIPS(){
+Float_t* GetMCEventRateFromFitIPS(TString inFMCStr){
 
-	TString inFMCStr = "./WaterSubFullNom.root";
 	TFile* inFMC = new TFile(inFMCStr,"OPEN");
 	TTree* selTreeMC = (TTree*)inFMC->Get("selectedEvents");
 
@@ -31,7 +30,6 @@ Float_t* GetMCEventRateFromFitIPS(){
 	for(int ii=0; ii<19; ii++){
 		out[ii]=0.;
 	}
-
 
 	xsecBinsHelper* binHelper = new xsecBinsHelper();
 
