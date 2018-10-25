@@ -32,6 +32,23 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 	}
 
 	//TODO: single diff shit is sloppy af, should re-write
+	//
+	
+	//xsecs for covariance calc
+	Float_t** xsec4cov = new Float_t*[400];
+	Float_t** xsec4covMom = new Float_t*[400];
+	for(int ii=0; ii<400; ii++){
+		xsec4cov[ii] = new Float_t[19];
+		xsec4covMom[ii] = new Float_t[7];
+	}
+	for(int ii=0; ii<400; ii++){
+		for(int jj=0; jj<19; jj++){
+			xsec4cov[ii][jj] = 0.;
+		}
+		for(int jj=0; jj<7; jj++){
+			xsec4covMom[ii][jj] = 0.;
+		}
+	}
 
 	for(int iToy=0; iToy<nToys; iToy++){
 		Float_t xsecMom=0.;
@@ -46,6 +63,7 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 			xsec*=1.0/intFlux[iToy];
 			xsec*=1.0/nTargets[iToy];
 			xsecStat[ii]->Fill(xsec);
+			xsec4cov[iToy][ii] = xsec*(1e40);
 			singleBin[iToy]+=xsec;
 			Float_t xsecN = nGen[iToy][ii]/(binWidth[ii]*intFlux[iToy]);
 			Float_t xsecNSF = nGenSF[iToy][ii]/(binWidth[ii]*intFlux[iToy]);
@@ -66,12 +84,14 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 				nDrawnP++;
 				if(ii==18) {
 					xsecMomStat[pIndex]->Fill(xsecMom);
+					xsec4covMom[iToy][pIndex] = xsecMom*(1e40);
 					xsecMomStatNEUT[pIndex]->Fill(xsecMomN);
 					xsecMomStatNEUTSF[pIndex]->Fill(xsecMomNSF);
 				}
 			} else {
 				nDrawnP=0;
 				xsecMomStat[pIndex]->Fill(xsecMom);
+				xsec4covMom[iToy][pIndex] = xsecMom*(1e40);
 				xsecMomStatNEUT[pIndex]->Fill(xsecMomN);
 				xsecMomStatNEUTSF[pIndex]->Fill(xsecMomNSF);
 				xsecMom=0.;
@@ -90,6 +110,55 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 	}
 
 	//calc final cov matrix 
+	Float_t** xsecCov = new Float_t*[19];
+	Float_t* xsecCovMeans = new Float_t[19];
+	for(int ii=0; ii<19; ii++){
+		xsecCov[ii] = new Float_t[19];
+		xsecCovMeans[ii]=xsecStat[ii]->GetMean()*(1e40);
+	}
+	for(int ii=0; ii<19; ii++){
+		for(int jj=0; jj<19; jj++){
+			xsecCov[ii][jj] = 0.;
+		}
+	}
+	for(int iToy=0; iToy<nToys; iToy++){
+		for(int ii=0; ii<19; ii++){
+			for(int jj=0; jj<19; jj++){
+				xsecCov[ii][jj]+=(xsec4cov[iToy][ii]-xsecCovMeans[ii])*(xsec4cov[iToy][jj]-xsecCovMeans[jj])/(xsecCovMeans[ii]*xsecCovMeans[jj]);
+			}
+		}
+	}
+
+	for(int ii=0; ii<19; ii++){
+		for(int jj=0; jj<19; jj++){
+			xsecCov[ii][jj]*=(1.0/((Float_t)nToys));
+		}
+	}
+
+
+	Float_t** xsecCovMom = new Float_t*[7];
+	Float_t* xsecCovMeansMom = new Float_t[7];
+	for(int ii=0; ii<7; ii++){
+		xsecCovMom[ii] = new Float_t[7];
+		xsecCovMeansMom[ii]=xsecMomStat[ii]->GetMean()*(1e40);
+	}
+	for(int ii=0; ii<7; ii++){
+		for(int jj=0; jj<7; jj++){
+			xsecCovMom[ii][jj]=0.;
+		}
+	}
+	for(int iToy=0; iToy<nToys; iToy++){
+		for(int ii=0; ii<7; ii++){
+			for(int jj=0; jj<7; jj++){
+				xsecCovMom[ii][jj]+=(xsec4covMom[iToy][ii]-xsecCovMeansMom[ii])*(xsec4covMom[iToy][jj]-xsecCovMeansMom[jj])/(xsecCovMeansMom[ii]*xsecCovMeansMom[jj]);
+			}
+		}
+	}
+	for(int ii=0; ii<7; ii++){
+		for(int jj=0; jj<7; jj++){
+			xsecCovMom[ii][jj]*=(1.0/((Float_t)nToys));
+		}
+	}
 
 	cout << "xsec results in data (x+-error | NEUT): " << endl;
 	for(int ii=0; ii<19; ii++){
