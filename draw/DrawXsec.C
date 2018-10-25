@@ -1,8 +1,16 @@
 #include <iostream>
+#include <iomanip>
 #include <TString.h>
 #include <TCanvas.h>
 #include <TLegend.h>
 #include <TStyle.h>
+#include <TH1D.h>
+#include <TH2D.h>
+
+#include "TColor.h"
+#include "/Users/thomascampbell/p0dCCAnalysis/FitResults/Macros/Phil_root-style-files-master/palettes.C"
+#include "TPaletteAxis.h"
+
 
 void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF, Float_t* binWidth, Float_t* intFlux, Float_t* nTargets, Float_t nTargetsNomMC, int nToys){
 	//calc xsec
@@ -353,18 +361,18 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 
 
 	leg = new TLegend(0.1,0.1,0.9,0.9);
-	leg->AddEntry(CosHist1,"Post Fit MC","pel");
-	leg->AddEntry(CosHistNEUT1,"Pre Fit MC (NEUT)","l");
-	leg->AddEntry(CosHistNEUTSF1,"Pre Fit MC (NEUT SF)","l");
+	leg->AddEntry(CosHist1,"Data","pel");
+	leg->AddEntry(CosHistNEUT1,"NEUT RFG+RPA","l");
+	leg->AddEntry(CosHistNEUTSF1,"NEUT SF","l");
 
 	CosHist1->Draw("PE0");
 	CosHistNEUT1->Draw("same");
 	CosHistNEUTSF1->Draw("same");
-	c->Print("./plots/CosByMom1.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMom1.pdf");
 
 	c = new TCanvas;
 	leg->Draw();
-	c->Print("./plots/CosByMomLegend.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMomLegend.pdf");
 
 	//2
 	c = new TCanvas;
@@ -394,7 +402,7 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 	CosHist2->Draw("PE0");
 	CosHistNEUT2->Draw("same");
 	CosHistNEUTSF2->Draw("same");
-	c->Print("./plots/CosByMom2.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMom2.pdf");
 
 	//3
 	c = new TCanvas;
@@ -423,7 +431,7 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 	CosHist3->Draw("PE0");
 	CosHistNEUT3->Draw("same");
 	CosHistNEUTSF3->Draw("same");
-	c->Print("./plots/CosByMom3.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMom3.pdf");
 
 	//4
 	c = new TCanvas;
@@ -452,7 +460,7 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 	CosHist4->Draw("PE0");
 	CosHistNEUT4->Draw("same");
 	CosHistNEUTSF4->Draw("same");
-	c->Print("./plots/CosByMom4.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMom4.pdf");
 
 	//5
 	c = new TCanvas;
@@ -481,7 +489,7 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 	CosHist5->Draw("PE0");
 	CosHistNEUT5->Draw("same");
 	CosHistNEUTSF5->Draw("same");
-	c->Print("./plots/CosByMom5.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMom5.pdf");
 
 	//6
 	c = new TCanvas;
@@ -511,7 +519,7 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 	CosHist6->Draw("PE0");
 	CosHistNEUT6->Draw("same");
 	CosHistNEUTSF6->Draw("same");
-	c->Print("./plots/CosByMom6.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMom6.pdf");
 
 	//7
 	c = new TCanvas;
@@ -540,7 +548,7 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 	CosHist7->Draw("PE0");
 	CosHistNEUT7->Draw("same");
 	CosHistNEUTSF7->Draw("same");
-	c->Print("./plots/CosByMom7.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMom7.pdf");
 
 	// single diff
 	Float_t PBinsDraw[8]={400,530,670,800,1000,1380,2010,3410};
@@ -573,13 +581,126 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 	MomFitResultNEUTSF->SetLineStyle(7);
 
 	leg = new TLegend(0.7,0.7,0.9,0.9);
-	leg->AddEntry(MomFitResult,"Post Fit MC","pel");
-	leg->AddEntry(MomFitResultNEUT,"Pre Fit MC (NEUT)","l");
-	leg->AddEntry(MomFitResultNEUTSF,"Pre Fit MC (NEUT SF)","l");
+	leg->AddEntry(MomFitResult,"Data","pel");
+	leg->AddEntry(MomFitResultNEUT,"NEUT RFG+RPA","l");
+	leg->AddEntry(MomFitResultNEUTSF,"NEUT SF","l");
 
 	MomFitResult->Draw("PE0");
 	MomFitResultNEUT->Draw("same");
 	MomFitResultNEUTSF->Draw("same");
 	leg->Draw("same");
-	c->Print("./plots/MomOverlay.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/MomOverlay.pdf");
+
+	// Covariance matrices
+	
+	TMatrixD FitCov(19,19);
+	for(int ii=0; ii<19; ii++){
+		for(int jj=0; jj<19; jj++){
+			FitCov(ii,jj)=xsecCov[ii][jj];
+		}
+	}
+	SetUserPalette(2);
+	gStyle->SetOptStat(0);
+
+	c = new TCanvas("c","",700,600);
+	TH2D* tempFitCovHist = new TH2D(FitCov);
+	tempFitCovHist->GetZaxis()->SetRangeUser(-0.3,0.3);
+	tempFitCovHist->Draw("colz");
+
+	gPad->Update();
+	gPad->SetRightMargin(0.15);
+	TPaletteAxis *palette = (TPaletteAxis*)tempFitCovHist->GetListOfFunctions()->FindObject("palette");
+	palette->SetX1NDC(0.85);
+	palette->SetX2NDC(0.9);
+	palette->SetLabelSize(0.01);
+	palette->SetLabelColor(kGreen);
+	gPad->Modified();
+	gPad->Update();
+
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/xsecCovMatrix.pdf");
+	delete c;
+	delete palette;
+	delete tempFitCovHist;
+
+	// Momentum single
+	TMatrixD FitCovMom(7,7);
+	for(int ii=0; ii<7; ii++){
+		for(int jj=0; jj<7; jj++){
+			FitCovMom(ii,jj)=xsecCovMom[ii][jj];
+		}
+	}
+	SetUserPalette(2);
+	gStyle->SetOptStat(0);
+
+	c = new TCanvas("c","",700,600);
+	tempFitCovHist = new TH2D(FitCovMom);
+	tempFitCovHist->GetZaxis()->SetRangeUser(-0.3,0.3);
+	tempFitCovHist->Draw("colz");
+
+	gPad->Update();
+	gPad->SetRightMargin(0.15);
+	palette = (TPaletteAxis*)tempFitCovHist->GetListOfFunctions()->FindObject("palette");
+	palette->SetX1NDC(0.85);
+	palette->SetX2NDC(0.9);
+	palette->SetLabelSize(0.01);
+	palette->SetLabelColor(kGreen);
+	gPad->Modified();
+	gPad->Update();
+
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/xsecCovMatrixMom.pdf");
+	delete c;
+
+	//TODO: print results from DrawXsecFast for Latex
+	
+	//CovMat:
+	cout << "======Cov Mat===1==" << endl;
+		cout << "&";
+		for(int i=0; i<6; i++){
+			cout << i+1;
+			if(i<5) cout << "&";
+			else cout << "\\\\" << endl;
+		}
+		for(int i=0; i<19; i++){
+			cout << i+1 << "&";
+			for(int j=0; j<6; j++){
+				cout << std::setprecision(4) << FitCov(i,j);
+				if(j<5) cout << "&";
+				else cout << "\\\\" << endl;
+			}
+		}
+
+		cout << "======Cov Mat===2==" << endl;
+		cout << "&";
+		for(int i=6; i<12; i++){
+			cout << i+1;
+			if(i<11) cout << "&";
+			else cout << "\\\\" << endl;
+		}
+		for(int i=0; i<19; i++){
+			cout << i+1 << "&";
+			for(int j=6; j<12; j++){
+				cout << std::setprecision(4) << FitCov(i,j);
+				if(j<11) cout << "&";
+				else cout << "\\\\" << endl;
+			}
+		}
+
+		cout << "======Cov Mat===3==" << endl;
+		cout << "&";
+		for(int i=12; i<19; i++){
+			cout << i+1;
+			if(i<18) cout << "&";
+			else cout << "\\\\" << endl;
+		}
+		for(int i=0; i<19; i++){
+			cout << i+1 << "&";
+			for(int j=12; j<19; j++){
+				cout << std::setprecision(4) << FitCov(i,j);
+				if(j<18) cout << "&";
+				else cout << "\\\\" << endl;
+			}
+		}
+
+
+
 }

@@ -306,16 +306,16 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	leg = new TLegend(0.1,0.1,0.9,0.9);
 	leg->AddEntry(CosHist1,"Nominal Fit","pel");
 	leg->AddEntry(CosHistSF1,"SF Tuned Fit","pel");
-	leg->AddEntry(CosHistNEUT1,"Pre Fit MC (NEUT)","l");
+	leg->AddEntry(CosHistNEUT1,"NEUT RFG+RPA","l");
 
 	CosHist1->Draw("PE0");
 	CosHistSF1->Draw("same PE0");
 	CosHistNEUT1->Draw("same");
-	c->Print("./plots/CosByMom1.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMom1.pdf");
 
 	c = new TCanvas;
 	leg->Draw();
-	c->Print("./plots/CosByMomLegend.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMomLegend.pdf");
 
 	//2
 	c = new TCanvas;
@@ -345,7 +345,7 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	CosHist2->Draw("PE0");
 	CosHistSF2->Draw("same PE0");
 	CosHistNEUT2->Draw("same");
-	c->Print("./plots/CosByMom2.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMom2.pdf");
 
 	//3
 	c = new TCanvas;
@@ -376,7 +376,7 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	CosHist3->Draw("PE0");
 	CosHistSF3->Draw("same PE0");
 	CosHistNEUT3->Draw("same");
-	c->Print("./plots/CosByMom3.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMom3.pdf");
 
 	//4
 	c = new TCanvas;
@@ -407,7 +407,7 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	CosHist4->Draw("PE0");
 	CosHistSF4->Draw("PE0");
 	CosHistNEUT4->Draw("same");
-	c->Print("./plots/CosByMom4.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMom4.pdf");
 
 	//5
 	c = new TCanvas;
@@ -438,7 +438,7 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	CosHist5->Draw("PE0");
 	CosHistSF5->Draw("same PE0");
 	CosHistNEUT5->Draw("same");
-	c->Print("./plots/CosByMom5.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMom5.pdf");
 
 	//6
 	c = new TCanvas;
@@ -469,7 +469,7 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	CosHist6->Draw("PE0");
 	CosHistSF6->Draw("same PE0");
 	CosHistNEUT6->Draw("same");
-	c->Print("./plots/CosByMom6.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMom6.pdf");
 
 	//7
 	c = new TCanvas;
@@ -499,7 +499,7 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	CosHist7->Draw("PE0");
 	CosHistSF7->Draw("same PE0");
 	CosHistNEUT7->Draw("same");
-	c->Print("./plots/CosByMom7.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMom7.pdf");
 
 	// single diff
 	Float_t PBinsDraw[8]={400,530,670,800,1000,1380,2010,3410};
@@ -529,10 +529,10 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 
 	leg = new TLegend(0.7,0.7,0.9,0.9);
 	leg->AddEntry(MomFitResult,"Post Fit MC","pel");
-	leg->AddEntry(MomFitResultNEUT,"Pre Fit MC (NEUT)","l");
+	leg->AddEntry(MomFitResultNEUT,"NEUT RFG+RPA","l");
 
 	MomFitResult->Draw("PE0");
 	MomFitResultNEUT->Draw("same");
 	leg->Draw("same");
-	c->Print("./plots/MomOverlay.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/MomOverlay.pdf");
 }
