@@ -4,31 +4,31 @@
 #include <TLegend.h>
 #include <TStyle.h>
 
-void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float_t** nGen, Float_t* binWidth, Float_t* intFlux, Float_t* nTargets, Float_t nTargetsNomMC, int nToys){
+void DrawXsecWTErrorComp(Float_t** nData, Float_t** nDataB, Float_t** nSel, Float_t** nSelB, Float_t** nGen, Float_t** nGenB, Float_t* binWidth, Float_t* intFlux, Float_t* nTargets, Float_t nTargetsNomMC, int nToys){
 
 	//calc xsec
 	suffStat** xsecStat = new suffStat*[19];
-	suffStat** xsecStatSF = new suffStat*[19];
+	suffStat** xsecStatB = new suffStat*[19];
 	suffStat** xsecStatNEUT = new suffStat*[19];
 	for(int ii=0; ii<19; ii++){
 		xsecStat[ii] = new suffStat(1e-39);
-		xsecStatSF[ii] = new suffStat(1e-39);
+		xsecStatB[ii] = new suffStat(1e-39);
 		xsecStatNEUT[ii] = new suffStat(1e-39);
 	}
 	suffStat** xsecMomStat = new suffStat*[7];
-	suffStat** xsecMomStatSF = new suffStat*[7];
+	suffStat** xsecMomStatB = new suffStat*[7];
 	suffStat** xsecMomStatNEUT = new suffStat*[7];
 	for(int ii=0; ii<7; ii++){
 		xsecMomStat[ii] = new suffStat(1e-39);
-		xsecMomStatSF[ii] = new suffStat(1e-39);
+		xsecMomStatB[ii] = new suffStat(1e-39);
 		xsecMomStatNEUT[ii] = new suffStat(1e-39);
 	}
 	Float_t* singleBin = new Float_t[400];
-	Float_t* singleBinSF = new Float_t[400];
+	Float_t* singleBinB = new Float_t[400];
 	Float_t* singleBinN = new Float_t[400];
 	for(int ii=0; ii<nToys; ii++){
 		singleBin[ii]=0.;
-		singleBinSF[ii]=0.;
+		singleBinB[ii]=0.;
 		singleBinN[ii]=0.;
 	}
 
@@ -36,56 +36,56 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 
 	for(int iToy=0; iToy<nToys; iToy++){
 		Float_t xsecMom=0.;
-		Float_t xsecMomSF=0.;
+		Float_t xsecMomB=0.;
 		Float_t xsecMomN=0.;
 		int nBinsMom=2;
 		int nDrawnP=0;
 		int pIndex=0;
 		for(int ii=0; ii<19; ii++){
 			Float_t xsec = nData[iToy][ii]/(nSel[iToy][ii]/nGen[iToy][ii]);
-			Float_t xsecSF = nDataSF[iToy][ii]/(nSel[iToy][ii]/nGen[iToy][ii]);
+			Float_t xsecB = nDataB[iToy][ii]/(nSelB[iToy][ii]/nGenB[iToy][ii]);
 			xsec*=1.0/binWidth[ii];
 			xsec*=1.0/intFlux[iToy];
 			xsec*=1.0/nTargets[iToy];
-			xsecSF*=1.0/binWidth[ii];
-			xsecSF*=1.0/intFlux[iToy];
-			xsecSF*=1.0/nTargets[iToy];
+			xsecB*=1.0/binWidth[ii];
+			xsecB*=1.0/intFlux[iToy];
+			xsecB*=(1902./2655.)/nTargets[iToy];
 			xsecStat[ii]->Fill(xsec);
-			xsecStatSF[ii]->Fill(xsecSF);
+			xsecStatB[ii]->Fill(xsecB);
 			singleBin[iToy]+=xsec;
-			singleBinSF[iToy]+=xsecSF;
+			singleBinB[iToy]+=xsecB;
 			Float_t xsecN = nGen[iToy][ii]/(binWidth[ii]*intFlux[iToy]);
 			xsecN*=1.0/nTargetsNomMC;
 			xsecStatNEUT[ii]->Fill(xsecN);
 			singleBinN[iToy]+=xsecN;
 			//Momentum single (Note: not normalized by bin width)
 			xsec*=binWidth[ii];
-			xsecSF*=binWidth[ii];
+			xsecB*=binWidth[ii];
 			xsecN*=binWidth[ii];
 			if(nDrawnP<nBinsMom){
 				xsecMom+=xsec;
-				xsecMomSF+=xsecSF;
+				xsecMomB+=xsecB;
 				xsecMomN+=xsecN;
 				nDrawnP++;
 				if(ii==18) {
 					xsecMomStat[pIndex]->Fill(xsecMom);
-					xsecMomStatSF[pIndex]->Fill(xsecMomSF);
+					xsecMomStatB[pIndex]->Fill(xsecMomB);
 					xsecMomStatNEUT[pIndex]->Fill(xsecMomN);
 				}
 			} else {
 				nDrawnP=0;
 				xsecMomStat[pIndex]->Fill(xsecMom);
-				xsecMomStatSF[pIndex]->Fill(xsecMomSF);
+				xsecMomStatB[pIndex]->Fill(xsecMomB);
 				xsecMomStatNEUT[pIndex]->Fill(xsecMomN);
 				xsecMom=0.;
-				xsecMomSF=0.;
+				xsecMomB=0.;
 				xsecMomN=0.;
 				pIndex++;
 				if(ii==16) nBinsMom=2;
 				else nBinsMom=3;
 				//add again
 				xsecMom+=xsec;
-				xsecMomSF+=xsecSF;
+				xsecMomB+=xsecB;
 				xsecMomN+=xsecN;
 				nDrawnP++;
 			}
@@ -101,16 +101,16 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	}
 
 	suffStat* sbStat = new suffStat(1e-39);
-	suffStat* sbStatSF = new suffStat(1e-39);
+	suffStat* sbStatB = new suffStat(1e-39);
 	suffStat* sbStatN = new suffStat(1e-39);
 	for(int ii=0; ii<nToys; ii++){
 		sbStat->Fill(singleBin[ii]);
-		sbStatSF->Fill(singleBinSF[ii]);
+		sbStatB->Fill(singleBinB[ii]);
 		sbStatN->Fill(singleBinN[ii]);
 	}
 	cout << "Single Bin Results:" << endl;
 	cout << "Data: " << sbStat->GetMean() << " +- " << sbStat->GetRMS() << endl;
-	cout << "Data SF Fit: " << sbStatSF->GetMean() << " +- " << sbStatSF->GetRMS() << endl;
+	cout << "Data B Fit: " << sbStatB->GetMean() << " +- " << sbStatB->GetRMS() << endl;
 	cout << "NEUT: " << sbStatN->GetMean() << endl;
 
 	cout << "Drawing Cross Section Plots" << endl;
@@ -136,13 +136,13 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	TH1F* CosHist6 = new TH1F("CosHist6","",3,CosBinDraw[6]);
 	TH1F* CosHist7 = new TH1F("CosHist7","",2,CosBinDraw[7]);
 
-	TH1F* CosHistSF1 = new TH1F("CosHistSF1","",2,CosBinDraw[1]);
-	TH1F* CosHistSF2 = new TH1F("CosHistSF2","",3,CosBinDraw[2]);
-	TH1F* CosHistSF3 = new TH1F("CosHistSF3","",3,CosBinDraw[3]);
-	TH1F* CosHistSF4 = new TH1F("CosHistSF4","",3,CosBinDraw[4]);
-	TH1F* CosHistSF5 = new TH1F("CosHistSF5","",3,CosBinDraw[5]);
-	TH1F* CosHistSF6 = new TH1F("CosHistSF6","",3,CosBinDraw[6]);
-	TH1F* CosHistSF7 = new TH1F("CosHistSF7","",2,CosBinDraw[7]);
+	TH1F* CosHistB1 = new TH1F("CosHistB1","",2,CosBinDraw[1]);
+	TH1F* CosHistB2 = new TH1F("CosHistB2","",3,CosBinDraw[2]);
+	TH1F* CosHistB3 = new TH1F("CosHistB3","",3,CosBinDraw[3]);
+	TH1F* CosHistB4 = new TH1F("CosHistB4","",3,CosBinDraw[4]);
+	TH1F* CosHistB5 = new TH1F("CosHistB5","",3,CosBinDraw[5]);
+	TH1F* CosHistB6 = new TH1F("CosHistB6","",3,CosBinDraw[6]);
+	TH1F* CosHistB7 = new TH1F("CosHistB7","",2,CosBinDraw[7]);
 
 	TH1F* CosHistNEUT1 = new TH1F("CosHistNEUT1","",2,CosBinDraw[1]);
 	TH1F* CosHistNEUT2 = new TH1F("CosHistNEUT2","",3,CosBinDraw[2]);
@@ -199,51 +199,51 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	CosHist7->SetBinContent(2,xsecStat[18]->GetMean());
 	CosHist7->SetBinError(2,xsecStat[18]->GetRMS());
 
-	//SF fit
-	CosHistSF1->SetBinContent(1,xsecStatSF[0]->GetMean());
-	CosHistSF1->SetBinError(1,xsecStatSF[0]->GetRMS());
-	CosHistSF1->SetBinContent(2,xsecStatSF[1]->GetMean());
-	CosHistSF1->SetBinError(2,xsecStatSF[1]->GetRMS());
+	//B fit
+	CosHistB1->SetBinContent(1,xsecStatB[0]->GetMean());
+	CosHistB1->SetBinError(1,xsecStatB[0]->GetRMS());
+	CosHistB1->SetBinContent(2,xsecStatB[1]->GetMean());
+	CosHistB1->SetBinError(2,xsecStatB[1]->GetRMS());
 
-	CosHistSF2->SetBinContent(1,xsecStatSF[2]->GetMean());
-	CosHistSF2->SetBinError(1,xsecStatSF[2]->GetRMS());
-	CosHistSF2->SetBinContent(2,xsecStatSF[3]->GetMean());
-	CosHistSF2->SetBinError(2,xsecStatSF[3]->GetRMS());
-	CosHistSF2->SetBinContent(3,xsecStatSF[4]->GetMean());
-	CosHistSF2->SetBinError(3,xsecStatSF[4]->GetRMS());
+	CosHistB2->SetBinContent(1,xsecStatB[2]->GetMean());
+	CosHistB2->SetBinError(1,xsecStatB[2]->GetRMS());
+	CosHistB2->SetBinContent(2,xsecStatB[3]->GetMean());
+	CosHistB2->SetBinError(2,xsecStatB[3]->GetRMS());
+	CosHistB2->SetBinContent(3,xsecStatB[4]->GetMean());
+	CosHistB2->SetBinError(3,xsecStatB[4]->GetRMS());
 
-	CosHistSF3->SetBinContent(1,xsecStatSF[5]->GetMean());
-	CosHistSF3->SetBinError(1,xsecStatSF[5]->GetRMS());
-	CosHistSF3->SetBinContent(2,xsecStatSF[6]->GetMean());
-	CosHistSF3->SetBinError(2,xsecStatSF[6]->GetRMS());
-	CosHistSF3->SetBinContent(3,xsecStatSF[7]->GetMean());
-	CosHistSF3->SetBinError(3,xsecStatSF[7]->GetRMS());
+	CosHistB3->SetBinContent(1,xsecStatB[5]->GetMean());
+	CosHistB3->SetBinError(1,xsecStatB[5]->GetRMS());
+	CosHistB3->SetBinContent(2,xsecStatB[6]->GetMean());
+	CosHistB3->SetBinError(2,xsecStatB[6]->GetRMS());
+	CosHistB3->SetBinContent(3,xsecStatB[7]->GetMean());
+	CosHistB3->SetBinError(3,xsecStatB[7]->GetRMS());
 
-	CosHistSF4->SetBinContent(1,xsecStatSF[8]->GetMean());
-	CosHistSF4->SetBinError(1,xsecStatSF[8]->GetRMS());
-	CosHistSF4->SetBinContent(2,xsecStatSF[9]->GetMean());
-	CosHistSF4->SetBinError(2,xsecStatSF[9]->GetRMS());
-	CosHistSF4->SetBinContent(3,xsecStatSF[10]->GetMean());
-	CosHistSF4->SetBinError(3,xsecStatSF[10]->GetRMS());
+	CosHistB4->SetBinContent(1,xsecStatB[8]->GetMean());
+	CosHistB4->SetBinError(1,xsecStatB[8]->GetRMS());
+	CosHistB4->SetBinContent(2,xsecStatB[9]->GetMean());
+	CosHistB4->SetBinError(2,xsecStatB[9]->GetRMS());
+	CosHistB4->SetBinContent(3,xsecStatB[10]->GetMean());
+	CosHistB4->SetBinError(3,xsecStatB[10]->GetRMS());
 
-	CosHistSF5->SetBinContent(1,xsecStatSF[11]->GetMean());
-	CosHistSF5->SetBinError(1,xsecStatSF[11]->GetRMS());
-	CosHistSF5->SetBinContent(2,xsecStatSF[12]->GetMean());
-	CosHistSF5->SetBinError(2,xsecStatSF[12]->GetRMS());
-	CosHistSF5->SetBinContent(3,xsecStatSF[13]->GetMean());
-	CosHistSF5->SetBinError(3,xsecStatSF[13]->GetRMS());
+	CosHistB5->SetBinContent(1,xsecStatB[11]->GetMean());
+	CosHistB5->SetBinError(1,xsecStatB[11]->GetRMS());
+	CosHistB5->SetBinContent(2,xsecStatB[12]->GetMean());
+	CosHistB5->SetBinError(2,xsecStatB[12]->GetRMS());
+	CosHistB5->SetBinContent(3,xsecStatB[13]->GetMean());
+	CosHistB5->SetBinError(3,xsecStatB[13]->GetRMS());
 
-	CosHistSF6->SetBinContent(1,xsecStatSF[14]->GetMean());
-	CosHistSF6->SetBinError(1,xsecStatSF[14]->GetRMS());
-	CosHistSF6->SetBinContent(2,xsecStatSF[15]->GetMean());
-	CosHistSF6->SetBinError(2,xsecStatSF[15]->GetRMS());
-	CosHistSF6->SetBinContent(3,xsecStatSF[16]->GetMean());
-	CosHistSF6->SetBinError(3,xsecStatSF[16]->GetRMS());
+	CosHistB6->SetBinContent(1,xsecStatB[14]->GetMean());
+	CosHistB6->SetBinError(1,xsecStatB[14]->GetRMS());
+	CosHistB6->SetBinContent(2,xsecStatB[15]->GetMean());
+	CosHistB6->SetBinError(2,xsecStatB[15]->GetRMS());
+	CosHistB6->SetBinContent(3,xsecStatB[16]->GetMean());
+	CosHistB6->SetBinError(3,xsecStatB[16]->GetRMS());
 
-	CosHistSF7->SetBinContent(1,xsecStatSF[17]->GetMean());
-	CosHistSF7->SetBinError(1,xsecStatSF[17]->GetRMS());
-	CosHistSF7->SetBinContent(2,xsecStatSF[18]->GetMean());
-	CosHistSF7->SetBinError(2,xsecStatSF[18]->GetRMS());
+	CosHistB7->SetBinContent(1,xsecStatB[17]->GetMean());
+	CosHistB7->SetBinError(1,xsecStatB[17]->GetRMS());
+	CosHistB7->SetBinContent(2,xsecStatB[18]->GetMean());
+	CosHistB7->SetBinError(2,xsecStatB[18]->GetRMS());
 
 	//NEUT
 	CosHistNEUT1->SetBinContent(1,xsecStatNEUT[0]->GetMean());
@@ -295,27 +295,25 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	CosHist1->SetMinimum(0);
 	CosHist1->SetTitle(CosTitleStr);
 
-	CosHistSF1->SetMarkerStyle(8);
-	CosHistSF1->SetMarkerSize(1);
-	CosHistSF1->SetMarkerColor(kGreen+2);
+	CosHistB1->SetMarkerStyle(8);
+	CosHistB1->SetMarkerSize(1);
+	CosHistB1->SetMarkerColor(kGreen+2);
 
 	CosHistNEUT1->SetLineColor(kRed+2);
 	CosHistNEUT1->SetLineStyle(7);
 
 
 	leg = new TLegend(0.1,0.1,0.9,0.9);
-	leg->AddEntry(CosHist1,"Nominal Fit","pel");
-	leg->AddEntry(CosHistSF1,"SF Tuned Fit","pel");
-	leg->AddEntry(CosHistNEUT1,"NEUT RFG+RPA","l");
+	leg->AddEntry(CosHist1,"New Result","pel");
+	leg->AddEntry(CosHistB1,"Old Result","pel");
 
 	CosHist1->Draw("PE0");
-	CosHistSF1->Draw("same PE0");
-	CosHistNEUT1->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMom1.pdf");
+	CosHistB1->Draw("same PE0");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMom1.pdf");
 
 	c = new TCanvas;
 	leg->Draw();
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMomLegend.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMomLegend.pdf");
 
 	//2
 	c = new TCanvas;
@@ -335,17 +333,16 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	CosHist2->SetMinimum(0);
 	CosHist2->SetTitle(CosTitleStr);
 
-	CosHistSF2->SetMarkerStyle(8);
-	CosHistSF2->SetMarkerSize(1);
-	CosHistSF2->SetMarkerColor(kGreen+2);
+	CosHistB2->SetMarkerStyle(8);
+	CosHistB2->SetMarkerSize(1);
+	CosHistB2->SetMarkerColor(kGreen+2);
 
 	CosHistNEUT2->SetLineColor(kRed+2);
 	CosHistNEUT2->SetLineStyle(7);
 
 	CosHist2->Draw("PE0");
-	CosHistSF2->Draw("same PE0");
-	CosHistNEUT2->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMom2.pdf");
+	CosHistB2->Draw("same PE0");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMom2.pdf");
 
 	//3
 	c = new TCanvas;
@@ -365,18 +362,17 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	CosHist3->SetMinimum(0);
 	CosHist3->SetTitle(CosTitleStr);
 
-	CosHistSF3->SetMarkerStyle(8);
-	CosHistSF3->SetMarkerSize(1);
-	CosHistSF3->SetMarkerColor(kGreen+2);
+	CosHistB3->SetMarkerStyle(8);
+	CosHistB3->SetMarkerSize(1);
+	CosHistB3->SetMarkerColor(kGreen+2);
 
 	CosHistNEUT3->SetLineColor(kRed+2);
 	CosHistNEUT3->SetLineStyle(7);
 
 
 	CosHist3->Draw("PE0");
-	CosHistSF3->Draw("same PE0");
-	CosHistNEUT3->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMom3.pdf");
+	CosHistB3->Draw("same PE0");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMom3.pdf");
 
 	//4
 	c = new TCanvas;
@@ -396,18 +392,17 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	CosHist4->SetMinimum(0);
 	CosHist4->SetTitle(CosTitleStr);
 
-	CosHistSF4->SetMarkerStyle(8);
-	CosHistSF4->SetMarkerSize(1);
-	CosHistSF4->SetMarkerColor(kGreen+2);
+	CosHistB4->SetMarkerStyle(8);
+	CosHistB4->SetMarkerSize(1);
+	CosHistB4->SetMarkerColor(kGreen+2);
 
 	CosHistNEUT4->SetLineColor(kRed+2);
 	CosHistNEUT4->SetLineStyle(7);
 
 
 	CosHist4->Draw("PE0");
-	CosHistSF4->Draw("same PE0");
-	CosHistNEUT4->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMom4.pdf");
+	CosHistB4->Draw("same PE0");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMom4.pdf");
 
 	//5
 	c = new TCanvas;
@@ -427,18 +422,17 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	CosHist5->SetMinimum(0);
 	CosHist5->SetTitle(CosTitleStr);
 
-	CosHistSF5->SetMarkerStyle(8);
-	CosHistSF5->SetMarkerSize(1);
-	CosHistSF5->SetMarkerColor(kGreen+2);
+	CosHistB5->SetMarkerStyle(8);
+	CosHistB5->SetMarkerSize(1);
+	CosHistB5->SetMarkerColor(kGreen+2);
 
 	CosHistNEUT5->SetLineColor(kRed+2);
 	CosHistNEUT5->SetLineStyle(7);
 
 
 	CosHist5->Draw("PE0");
-	CosHistSF5->Draw("same PE0");
-	CosHistNEUT5->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMom5.pdf");
+	CosHistB5->Draw("same PE0");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMom5.pdf");
 
 	//6
 	c = new TCanvas;
@@ -459,17 +453,16 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	CosHist6->SetMaximum(1.8*CosHist6->GetMaximum());
 	CosHist6->SetTitle(CosTitleStr);
 
-	CosHistSF6->SetMarkerStyle(8);
-	CosHistSF6->SetMarkerSize(1);
-	CosHistSF6->SetMarkerColor(kGreen+2);
+	CosHistB6->SetMarkerStyle(8);
+	CosHistB6->SetMarkerSize(1);
+	CosHistB6->SetMarkerColor(kGreen+2);
 
 	CosHistNEUT6->SetLineColor(kRed+2);
 	CosHistNEUT6->SetLineStyle(7);
 
 	CosHist6->Draw("PE0");
-	CosHistSF6->Draw("same PE0");
-	CosHistNEUT6->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMom6.pdf");
+	CosHistB6->Draw("same PE0");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMom6.pdf");
 
 	//7
 	c = new TCanvas;
@@ -489,17 +482,16 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	CosHist7->SetMinimum(0);
 	CosHist7->SetTitle(CosTitleStr);
 
-	CosHistSF7->SetMarkerStyle(8);
-	CosHistSF7->SetMarkerSize(1);
-	CosHistSF7->SetMarkerColor(kGreen+2);
+	CosHistB7->SetMarkerStyle(8);
+	CosHistB7->SetMarkerSize(1);
+	CosHistB7->SetMarkerColor(kGreen+2);
 
 	CosHistNEUT7->SetLineColor(kRed+2);
 	CosHistNEUT7->SetLineStyle(7);
 
 	CosHist7->Draw("PE0");
-	CosHistSF7->Draw("same PE0");
-	CosHistNEUT7->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/CosByMom7.pdf");
+	CosHistB7->Draw("same PE0");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMom7.pdf");
 
 	// single diff
 	Float_t PBinsDraw[8]={400,530,670,800,1000,1380,2010,3410};
@@ -532,7 +524,6 @@ void DrawXsecSFFitComp(Float_t** nData, Float_t** nDataSF, Float_t** nSel, Float
 	leg->AddEntry(MomFitResultNEUT,"NEUT RFG+RPA","l");
 
 	MomFitResult->Draw("PE0");
-	MomFitResultNEUT->Draw("same");
 	leg->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/SFcomp/MomOverlay.pdf");
+	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/MomOverlay.pdf");
 }
