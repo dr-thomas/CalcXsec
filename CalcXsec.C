@@ -13,7 +13,7 @@
 #include "./util/suffstat.hxx"
 #include "./util/suffstat.cxx"
 #include "./draw/DrawXsec.C"
-//to clone: git clone tcampbell@ens-hpc.engr.colostate.edu:/home/other/tcampbell/git/CalcXsec.git
+//to clone: git clone tcampbell@culogin01.colorado.edu:/usr/users/tcampbell/git/CalcXsec.git
 
 int GetFluxBinIndex(Float_t);
 bool isInWTFV(Float_t* pos);
