@@ -12,7 +12,8 @@
 #include "./covmat/covmat.cxx"
 #include "./util/suffstat.hxx"
 #include "./util/suffstat.cxx"
-#include "./draw/DrawXsec.C"
+//#include "./draw/DrawXsec.C"
+#include "./draw/DrawNuisComp.C"
 //to clone: git clone tcampbell@culogin01.colorado.edu:/usr/users/tcampbell/git/CalcXsec.git
 
 int GetFluxBinIndex(Float_t);
@@ -20,10 +21,10 @@ bool isInWTFV(Float_t* pos);
 
 void CalcXsec(){
 	//define files
-	TString inFMCGenieStr = "/Users/thomascampbell/p0dCCAnalysis/FitResults/Macros/XsecDrawFiles/GenWithFlagGENIE.root";
+	TString inFMCGenieStr = "/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/Macros/XsecDrawFiles/GenWithFlagGENIE.root";
 	//TString inFMCEffStr = "/Users/thomascampbell/Desktop/GenCheck/GenWithFlag.root";
 	TString inFMCEffStr = "./GenWithFlag.root";
-	TString inFFitStr = "/Users/thomascampbell/p0dCCAnalysis/FitResults/DataFits/NEUT/fitBaseOutNoReg.root";
+	TString inFFitStr = "/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/DataFits/NEUT/fitBaseOutNoReg.root";
 
 	TFile* inFMCEff = new TFile(inFMCEffStr,"OPEN");
 	TFile* inFMCGenie = new TFile(inFMCGenieStr,"OPEN");
@@ -51,7 +52,7 @@ void CalcXsec(){
 	//set up cov matrices 
 	
 	//flux
-	TFile *finFluxCov = new TFile("/Users/thomascampbell/p0dCCAnalysis/FitResults/Macros/XsecDrawFiles/flux_covariance_banff_13av1.1.root","OPEN");
+	TFile *finFluxCov = new TFile("/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/Macros/XsecDrawFiles/flux_covariance_banff_13av1.1.root","OPEN");
 	TAxis* numubBins = (TAxis*)finFluxCov->Get("nd5_anumode_numub_bins");
 	TMatrixDSym* covInFlux   = (TMatrixDSym*)finFluxCov->Get("total_flux_cov");
 
@@ -98,7 +99,7 @@ void CalcXsec(){
 	xsecBinsHelper* binHelper = new xsecBinsHelper();
 	//loop over events, loop over toys
 	//generated loop
-	int nToys=400;//max 400
+	int nToys=4;//max 400
 
 	for(int iEntry=0; iEntry<nEntriesTruth; iEntry++){
 		if((iEntry%10000)==0) cout << iEntry*1.0/nEntriesTruth << endl;
@@ -158,7 +159,7 @@ void CalcXsec(){
 
 	//integrated flux
 	//correleted with efficiency using prefit covariacne, no correlations to data
-	TFile* inFflux = new TFile("/Users/thomascampbell/p0dCCAnalysis/FitResults/Macros/tuned13av1.1/run5c/nd5_tuned13av1.1_13anom_run5c_antinumode_fine.root");
+	TFile* inFflux = new TFile("/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/Macros/tuned13av1.1/run5c/nd5_tuned13av1.1_13anom_run5c_antinumode_fine.root");
 	Double_t FluxBinsPass[12]={0.0,0.4,0.5,0.6,0.7,1.0,1.5,2.5,3.5,5.0,7.0,30.0};
 	TH1F* tempFluxHist = (TH1F*)inFflux->Get("enu_nd5_tuned13a_numub");
 	TH1F* FluxHist = (TH1F*)tempFluxHist->Rebin(11,"FluxHist",FluxBinsPass);
@@ -193,7 +194,7 @@ void CalcXsec(){
 	Float_t* binWidth = binHelper->GetBinWidths();
 
 	//draw results
-	DrawXsec(nData,nSel,nGen,nGenSF,binWidth,intFlux,nTargets,nTargetsNomMC,nToys);
+	DrawNuisComp(nData,nSel,nGen,nGenSF,binWidth,intFlux,nTargets,nTargetsNomMC,nToys);
 	//for drawing, copy and paste gross code into new macro and pass around 
 	//the nesseary calculated stuff 
 	//-> or just take style stuff and write better/neater 

@@ -12,7 +12,7 @@
 #include "TPaletteAxis.h"
 
 
-void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF, Float_t* binWidth, Float_t* intFlux, Float_t* nTargets, Float_t nTargetsNomMC, int nToys){
+void DrawNuisComp(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF, Float_t* binWidth, Float_t* intFlux, Float_t* nTargets, Float_t nTargetsNomMC, int nToys){
 	//calc xsec
 	suffStat** xsecStat = new suffStat*[19];
 	suffStat** xsecStatNEUT = new suffStat*[19];
@@ -328,7 +328,25 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 	CosHistNEUTSF7->SetBinContent(1,xsecStatNEUTSF[17]->GetMean());
 	CosHistNEUTSF7->SetBinContent(2,xsecStatNEUTSF[18]->GetMean());
 
+	//NUISANCE
+	TFile* inFnuisance = new TFile("rootFiles/nuiscompAnuCiroScaled.root", "OPEN");
+	TH1F* nuisNeutRes = (TH1F*) inFnuisance->Get("T2K_CC0pi_XSec_2DPcos_anu_P0D_MC");
 
+	TH1F** CosHistsNuisNEUT = new TH1F*[7];
+	for(int ii=0; ii<7; ii++){
+		int tempNbins=0;
+		if(ii==0 || ii==6){
+			tempNbins=2;
+		} else {
+			tempNbins=3;
+		}
+		TString labelStr = "CosHistsNuisNEUT";
+		labelStr += ii;
+		CosHistsNuisNEUT[ii] = new TH1F(labelStr,"",tempNbins,CosBinDraw[ii]);
+	}
+
+
+	// ------------------  going to re write all this -------------------//
 	//Cos by momentum slice 
 	TString PBinsStr[9]={"0","400","530","670","800","1000","1380","2010","3410"};
 	TString CosTitleStr;
