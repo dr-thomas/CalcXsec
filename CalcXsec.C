@@ -12,8 +12,7 @@
 #include "./covmat/covmat.cxx"
 #include "./util/suffstat.hxx"
 #include "./util/suffstat.cxx"
-//#include "./draw/DrawXsec.C"
-#include "./draw/DrawNuisComp.C"
+#include "./draw/DrawXsec.C"
 //to clone: git clone tcampbell@culogin01.colorado.edu:/usr/users/tcampbell/git/CalcXsec.git
 
 int GetFluxBinIndex(Float_t);
@@ -99,7 +98,7 @@ void CalcXsec(){
 	xsecBinsHelper* binHelper = new xsecBinsHelper();
 	//loop over events, loop over toys
 	//generated loop
-	int nToys=4;//max 400
+	int nToys=400;//max 400
 
 	for(int iEntry=0; iEntry<nEntriesTruth; iEntry++){
 		if((iEntry%10000)==0) cout << iEntry*1.0/nEntriesTruth << endl;
@@ -194,7 +193,7 @@ void CalcXsec(){
 	Float_t* binWidth = binHelper->GetBinWidths();
 
 	//draw results
-	DrawNuisComp(nData,nSel,nGen,nGenSF,binWidth,intFlux,nTargets,nTargetsNomMC,nToys);
+	DrawXsec(nData,nSel,nGen,nGenSF,binWidth,intFlux,nTargets,nTargetsNomMC,nToys);
 	//for drawing, copy and paste gross code into new macro and pass around 
 	//the nesseary calculated stuff 
 	//-> or just take style stuff and write better/neater 

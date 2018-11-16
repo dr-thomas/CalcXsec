@@ -201,355 +201,112 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 		{1,1,1,1}//only one bin here
 	};
 
-
-	TH1F* CosHist1 = new TH1F("CosHist1","",2,CosBinDraw[1]);
-	TH1F* CosHist2 = new TH1F("CosHist2","",3,CosBinDraw[2]);
-	TH1F* CosHist3 = new TH1F("CosHist3","",3,CosBinDraw[3]);
-	TH1F* CosHist4 = new TH1F("CosHist4","",3,CosBinDraw[4]);
-	TH1F* CosHist5 = new TH1F("CosHist5","",3,CosBinDraw[5]);
-	TH1F* CosHist6 = new TH1F("CosHist6","",3,CosBinDraw[6]);
-	TH1F* CosHist7 = new TH1F("CosHist7","",2,CosBinDraw[7]);
-
-	TH1F* CosHistNEUT1 = new TH1F("CosHistNEUT1","",2,CosBinDraw[1]);
-	TH1F* CosHistNEUT2 = new TH1F("CosHistNEUT2","",3,CosBinDraw[2]);
-	TH1F* CosHistNEUT3 = new TH1F("CosHistNEUT3","",3,CosBinDraw[3]);
-	TH1F* CosHistNEUT4 = new TH1F("CosHistNEUT4","",3,CosBinDraw[4]);
-	TH1F* CosHistNEUT5 = new TH1F("CosHistNEUT5","",3,CosBinDraw[5]);
-	TH1F* CosHistNEUT6 = new TH1F("CosHistNEUT6","",3,CosBinDraw[6]);
-	TH1F* CosHistNEUT7 = new TH1F("CosHistNEUT7","",2,CosBinDraw[7]);
-
-	TH1F* CosHistNEUTSF1 = new TH1F("CosHistNEUTSF1","",2,CosBinDraw[1]);
-	TH1F* CosHistNEUTSF2 = new TH1F("CosHistNEUTSF2","",3,CosBinDraw[2]);
-	TH1F* CosHistNEUTSF3 = new TH1F("CosHistNEUTSF3","",3,CosBinDraw[3]);
-	TH1F* CosHistNEUTSF4 = new TH1F("CosHistNEUTSF4","",3,CosBinDraw[4]);
-	TH1F* CosHistNEUTSF5 = new TH1F("CosHistNEUTSF5","",3,CosBinDraw[5]);
-	TH1F* CosHistNEUTSF6 = new TH1F("CosHistNEUTSF6","",3,CosBinDraw[6]);
-	TH1F* CosHistNEUTSF7 = new TH1F("CosHistNEUTSF7","",2,CosBinDraw[7]);
-
-
 	TLegend* leg = new TLegend(0.7,0.7,0.9,0.9);
 
-	CosHist1->SetBinContent(1,xsecStat[0]->GetMean());
-	CosHist1->SetBinError(1,xsecStat[0]->GetRMS());
-	CosHist1->SetBinContent(2,xsecStat[1]->GetMean());
-	CosHist1->SetBinError(2,xsecStat[1]->GetRMS());
-
-	CosHist2->SetBinContent(1,xsecStat[2]->GetMean());
-	CosHist2->SetBinError(1,xsecStat[2]->GetRMS());
-	CosHist2->SetBinContent(2,xsecStat[3]->GetMean());
-	CosHist2->SetBinError(2,xsecStat[3]->GetRMS());
-	CosHist2->SetBinContent(3,xsecStat[4]->GetMean());
-	CosHist2->SetBinError(3,xsecStat[4]->GetRMS());
-
-	CosHist3->SetBinContent(1,xsecStat[5]->GetMean());
-	CosHist3->SetBinError(1,xsecStat[5]->GetRMS());
-	CosHist3->SetBinContent(2,xsecStat[6]->GetMean());
-	CosHist3->SetBinError(2,xsecStat[6]->GetRMS());
-	CosHist3->SetBinContent(3,xsecStat[7]->GetMean());
-	CosHist3->SetBinError(3,xsecStat[7]->GetRMS());
-
-	CosHist4->SetBinContent(1,xsecStat[8]->GetMean());
-	CosHist4->SetBinError(1,xsecStat[8]->GetRMS());
-	CosHist4->SetBinContent(2,xsecStat[9]->GetMean());
-	CosHist4->SetBinError(2,xsecStat[9]->GetRMS());
-	CosHist4->SetBinContent(3,xsecStat[10]->GetMean());
-	CosHist4->SetBinError(3,xsecStat[10]->GetRMS());
-
-	CosHist5->SetBinContent(1,xsecStat[11]->GetMean());
-	CosHist5->SetBinError(1,xsecStat[11]->GetRMS());
-	CosHist5->SetBinContent(2,xsecStat[12]->GetMean());
-	CosHist5->SetBinError(2,xsecStat[12]->GetRMS());
-	CosHist5->SetBinContent(3,xsecStat[13]->GetMean());
-	CosHist5->SetBinError(3,xsecStat[13]->GetRMS());
-
-	CosHist6->SetBinContent(1,xsecStat[14]->GetMean());
-	CosHist6->SetBinError(1,xsecStat[14]->GetRMS());
-	CosHist6->SetBinContent(2,xsecStat[15]->GetMean());
-	CosHist6->SetBinError(2,xsecStat[15]->GetRMS());
-	CosHist6->SetBinContent(3,xsecStat[16]->GetMean());
-	CosHist6->SetBinError(3,xsecStat[16]->GetRMS());
-
-	CosHist7->SetBinContent(1,xsecStat[17]->GetMean());
-	CosHist7->SetBinError(1,xsecStat[17]->GetRMS());
-	CosHist7->SetBinContent(2,xsecStat[18]->GetMean());
-	CosHist7->SetBinError(2,xsecStat[18]->GetRMS());
-
-	//NEUT
-	CosHistNEUT1->SetBinContent(1,xsecStatNEUT[0]->GetMean());
-	CosHistNEUT1->SetBinContent(2,xsecStatNEUT[1]->GetMean());
-
-	CosHistNEUT2->SetBinContent(1,xsecStatNEUT[2]->GetMean());
-	CosHistNEUT2->SetBinContent(2,xsecStatNEUT[3]->GetMean());
-	CosHistNEUT2->SetBinContent(3,xsecStatNEUT[4]->GetMean());
-
-	CosHistNEUT3->SetBinContent(1,xsecStatNEUT[5]->GetMean());
-	CosHistNEUT3->SetBinContent(2,xsecStatNEUT[6]->GetMean());
-	CosHistNEUT3->SetBinContent(3,xsecStatNEUT[7]->GetMean());
-
-	CosHistNEUT4->SetBinContent(1,xsecStatNEUT[8]->GetMean());
-	CosHistNEUT4->SetBinContent(2,xsecStatNEUT[9]->GetMean());
-	CosHistNEUT4->SetBinContent(3,xsecStatNEUT[10]->GetMean());
-
-	CosHistNEUT5->SetBinContent(1,xsecStatNEUT[11]->GetMean());
-	CosHistNEUT5->SetBinContent(2,xsecStatNEUT[12]->GetMean());
-	CosHistNEUT5->SetBinContent(3,xsecStatNEUT[13]->GetMean());
-
-	CosHistNEUT6->SetBinContent(1,xsecStatNEUT[14]->GetMean());
-	CosHistNEUT6->SetBinContent(2,xsecStatNEUT[15]->GetMean());
-	CosHistNEUT6->SetBinContent(3,xsecStatNEUT[16]->GetMean());
-
-	CosHistNEUT7->SetBinContent(1,xsecStatNEUT[17]->GetMean());
-	CosHistNEUT7->SetBinContent(2,xsecStatNEUT[18]->GetMean());
-
-	//NEUTSF
-	CosHistNEUTSF1->SetBinContent(1,xsecStatNEUTSF[0]->GetMean());
-	CosHistNEUTSF1->SetBinContent(2,xsecStatNEUTSF[1]->GetMean());
-
-	CosHistNEUTSF2->SetBinContent(1,xsecStatNEUTSF[2]->GetMean());
-	CosHistNEUTSF2->SetBinContent(2,xsecStatNEUTSF[3]->GetMean());
-	CosHistNEUTSF2->SetBinContent(3,xsecStatNEUTSF[4]->GetMean());
-
-	CosHistNEUTSF3->SetBinContent(1,xsecStatNEUTSF[5]->GetMean());
-	CosHistNEUTSF3->SetBinContent(2,xsecStatNEUTSF[6]->GetMean());
-	CosHistNEUTSF3->SetBinContent(3,xsecStatNEUTSF[7]->GetMean());
-
-	CosHistNEUTSF4->SetBinContent(1,xsecStatNEUTSF[8]->GetMean());
-	CosHistNEUTSF4->SetBinContent(2,xsecStatNEUTSF[9]->GetMean());
-	CosHistNEUTSF4->SetBinContent(3,xsecStatNEUTSF[10]->GetMean());
-
-	CosHistNEUTSF5->SetBinContent(1,xsecStatNEUTSF[11]->GetMean());
-	CosHistNEUTSF5->SetBinContent(2,xsecStatNEUTSF[12]->GetMean());
-	CosHistNEUTSF5->SetBinContent(3,xsecStatNEUTSF[13]->GetMean());
-
-	CosHistNEUTSF6->SetBinContent(1,xsecStatNEUTSF[14]->GetMean());
-	CosHistNEUTSF6->SetBinContent(2,xsecStatNEUTSF[15]->GetMean());
-	CosHistNEUTSF6->SetBinContent(3,xsecStatNEUTSF[16]->GetMean());
-
-	CosHistNEUTSF7->SetBinContent(1,xsecStatNEUTSF[17]->GetMean());
-	CosHistNEUTSF7->SetBinContent(2,xsecStatNEUTSF[18]->GetMean());
+	//NUISANCE
+	TFile* inFnuisance = new TFile("rootFiles/nuiscompAnuCiroScaled.root", "OPEN");
+	TH1F* nuisNeutRes = (TH1F*) inFnuisance->Get("T2K_CC0pi_XSec_2DPcos_anu_P0D_MC");
 
 
-	//Cos by momentum slice 
+	TH1F** CosHists = new TH1F*[7];
+	TH1F** CosHistsNEUT = new TH1F*[7];
+	TH1F** CosHistsNEUTSF = new TH1F*[7];
+	TH1F** CosHistsNuisNEUT = new TH1F*[7];
+
+	for(int ii=0; ii<7; ii++){
+		int tempNbins=0;
+		if(ii==0 || ii==6){
+			tempNbins=2;
+		} else {
+			tempNbins=3;
+		}
+		TString labelStr = "CosHists";
+		labelStr += ii;
+		CosHists[ii] = new TH1F(labelStr,"",tempNbins,CosBinDraw[ii+1]);
+		labelStr = "CosHistsNEUT";
+		labelStr += ii;
+		CosHistsNEUT[ii] = new TH1F(labelStr,"",tempNbins,CosBinDraw[ii+1]);
+		labelStr = "CosHistsNEUTSF";
+		labelStr += ii;
+		CosHistsNEUTSF[ii] = new TH1F(labelStr,"",tempNbins,CosBinDraw[ii+1]);
+		labelStr = "CosHistsNuisNEUT";
+		labelStr += ii;
+		CosHistsNuisNEUT[ii] = new TH1F(labelStr,"",tempNbins,CosBinDraw[ii+1]);
+	}
+
+	int nFilled=0;
+	for(int ii=0; ii<7; ii++){
+		int tempNbins=0;
+		if(ii==0 || ii==6){
+			tempNbins=2;
+		} else {
+			tempNbins=3;
+		}
+		for(int jj=0; jj<tempNbins; jj++){
+			CosHists[ii]->SetBinContent(jj+1,xsecStat[nFilled]->GetMean());
+			CosHists[ii]->SetBinError(jj+1,xsecStat[nFilled]->GetRMS());
+			CosHistsNEUT[ii]->SetBinContent(jj+1,xsecStatNEUT[nFilled]->GetMean());
+			CosHistsNEUTSF[ii]->SetBinContent(jj+1,xsecStatNEUTSF[nFilled]->GetMean());
+			CosHistsNuisNEUT[ii]->SetBinContent(jj+1, nuisNeutRes->GetBinContent(nFilled+1));
+			nFilled++;
+		}
+	}
+
+	//Cos by momentum xsec slice 
 	TString PBinsStr[9]={"0","400","530","670","800","1000","1380","2010","3410"};
 	TString CosTitleStr;
 
 	gStyle->SetOptStat(0);
 
-	//1
-	TCanvas* c = new TCanvas;
-	gPad->SetLeftMargin(0.15); //left margin is 15 per cent of the pad width
-	CosHist1->GetYaxis()->SetTitleOffset(1.4);
+	TCanvas* c;
 
+	for(int ii=0; ii<7; ii++){
+		c = new TCanvas;
+		gPad->SetLeftMargin(0.15); //left margin is 15 per cent of the pad width
+		CosHists[ii]->GetYaxis()->SetTitleOffset(1.4);
 
-	CosTitleStr="";
-	CosTitleStr+=PBinsStr[1];
-	CosTitleStr+=" < P_{#mu} < ";
-	CosTitleStr+=PBinsStr[2];
+		CosTitleStr="";
+		CosTitleStr+=PBinsStr[ii+1];
+		CosTitleStr+=" < P_{#mu} < ";
+		CosTitleStr+=PBinsStr[ii+2];
 
-	CosHist1->GetXaxis()->SetTitle("sel. #mu^{+} cos#theta");
-	CosHist1->GetYaxis()->SetTitle("#frac{d#sigma}{dpd(cos#theta)} (cm^{2}/MeV/H_{2}O molecule)");
-	CosHist1->SetMarkerStyle(8);
-	CosHist1->SetMarkerSize(1);
-	CosHist1->SetMinimum(0);
-	CosHist1->SetTitle(CosTitleStr);
+		CosHists[ii]->GetXaxis()->SetTitle("sel. #mu^{+} cos#theta");
+		CosHists[ii]->GetYaxis()->SetTitle("#frac{d#sigma}{dpd(cos#theta)} (cm^{2}/MeV/H_{2}O molecule)");
+		CosHists[ii]->SetMarkerStyle(8);
+		CosHists[ii]->SetMarkerSize(1);
+		CosHists[ii]->SetMinimum(0);
+		CosHists[ii]->SetTitle(CosTitleStr);
 
-	CosHistNEUT1->SetLineColor(kRed+2);
-	CosHistNEUT1->SetLineStyle(7);
+		CosHistsNEUT[ii]->SetLineColor(kRed+2);
+		CosHistsNEUT[ii]->SetLineStyle(7);
 
-	CosHistNEUTSF1->SetLineColor(kGreen+2);
-	CosHistNEUTSF1->SetLineStyle(7);
+		CosHistsNuisNEUT[ii]->SetLineColor(kBlack);
+		CosHistsNuisNEUT[ii]->SetLineStyle(7);
 
+		CosHistsNEUTSF[ii]->SetLineColor(kGreen+2);
+		CosHistsNEUTSF[ii]->SetLineStyle(7);
 
-	leg = new TLegend(0.1,0.1,0.9,0.9);
-	leg->AddEntry(CosHist1,"Data","pel");
-	leg->AddEntry(CosHistNEUT1,"NEUT RFG+RPA","l");
-	leg->AddEntry(CosHistNEUTSF1,"NEUT SF","l");
+		leg = new TLegend(0.1,0.1,0.9,0.9);
+		leg->AddEntry(CosHists[ii],"Data","pel");
+		leg->AddEntry(CosHistsNEUT[ii],"NEUT RFG+RPA","l");
+		leg->AddEntry(CosHistsNuisNEUT[ii],"NUISANCE NEUT","l");
+		leg->AddEntry(CosHistsNEUTSF[ii],"NEUT SF","l");
 
-	CosHist1->Draw("PE0");
-	CosHistNEUT1->Draw("same");
-	CosHistNEUTSF1->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMom1.pdf");
+		CosHists[ii]->Draw("PE0");
+		CosHistsNEUT[ii]->Draw("same");
+		CosHistsNuisNEUT[ii]->Draw("same");
+		CosHistsNEUTSF[ii]->Draw("same");
+
+		TString printStr = "./plots/XsecSlice";
+		printStr += ii;
+		printStr += ".pdf";
+		c->Print(printStr);
+	}
 
 	c = new TCanvas;
 	leg->Draw();
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMomLegend.pdf");
-
-	//2
-	c = new TCanvas;
-	gPad->SetLeftMargin(0.15); //left margin is 15 per cent of the pad width
-	CosHist2->GetYaxis()->SetTitleOffset(1.4);
-
-
-	CosTitleStr="";
-	CosTitleStr+=PBinsStr[2];
-	CosTitleStr+=" < P_{#mu} < ";
-	CosTitleStr+=PBinsStr[3];
-
-	CosHist2->GetXaxis()->SetTitle("sel. #mu^{+} cos#theta");
-	CosHist2->GetYaxis()->SetTitle("#frac{d#sigma}{dpd(cos#theta)} (cm^{2}/MeV/H_{2}O molecule)");
-	CosHist2->SetMarkerStyle(8);
-	CosHist2->SetMarkerSize(1);
-	CosHist2->SetMinimum(0);
-	CosHist2->SetTitle(CosTitleStr);
-
-	CosHistNEUT2->SetLineColor(kRed+2);
-	CosHistNEUT2->SetLineStyle(7);
-
-	CosHistNEUTSF2->SetLineColor(kGreen+2);
-	CosHistNEUTSF2->SetLineStyle(7);
-
-
-	CosHist2->Draw("PE0");
-	CosHistNEUT2->Draw("same");
-	CosHistNEUTSF2->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMom2.pdf");
-
-	//3
-	c = new TCanvas;
-	gPad->SetLeftMargin(0.15); //left margin is 15 per cent of the pad width
-	CosHist3->GetYaxis()->SetTitleOffset(1.4);
-
-
-	CosTitleStr="";
-	CosTitleStr+=PBinsStr[3];
-	CosTitleStr+=" < P_{#mu} < ";
-	CosTitleStr+=PBinsStr[4];
-
-	CosHist3->GetXaxis()->SetTitle("sel. #mu^{+} cos#theta");
-	CosHist3->GetYaxis()->SetTitle("#frac{d#sigma}{dpd(cos#theta)} (cm^{2}/MeV/H_{2}O molecule)");
-	CosHist3->SetMarkerStyle(8);
-	CosHist3->SetMarkerSize(1);
-	CosHist3->SetMinimum(0);
-	CosHist3->SetTitle(CosTitleStr);
-
-	CosHistNEUT3->SetLineColor(kRed+2);
-	CosHistNEUT3->SetLineStyle(7);
-
-	CosHistNEUTSF3->SetLineColor(kGreen+2);
-	CosHistNEUTSF3->SetLineStyle(7);
-
-	CosHist3->Draw("PE0");
-	CosHistNEUT3->Draw("same");
-	CosHistNEUTSF3->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMom3.pdf");
-
-	//4
-	c = new TCanvas;
-	gPad->SetLeftMargin(0.15); //left margin is 15 per cent of the pad width
-	CosHist4->GetYaxis()->SetTitleOffset(1.4);
-
-
-	CosTitleStr="";
-	CosTitleStr+=PBinsStr[4];
-	CosTitleStr+=" < P_{#mu} < ";
-	CosTitleStr+=PBinsStr[5];
-
-	CosHist4->GetXaxis()->SetTitle("sel. #mu^{+} cos#theta");
-	CosHist4->GetYaxis()->SetTitle("#frac{d#sigma}{dpd(cos#theta)} (cm^{2}/MeV/H_{2}O molecule)");
-	CosHist4->SetMarkerStyle(8);
-	CosHist4->SetMarkerSize(1);
-	CosHist4->SetMinimum(0);
-	CosHist4->SetTitle(CosTitleStr);
-
-	CosHistNEUT4->SetLineColor(kRed+2);
-	CosHistNEUT4->SetLineStyle(7);
-
-	CosHistNEUTSF4->SetLineColor(kGreen+2);
-	CosHistNEUTSF4->SetLineStyle(7);
-
-	CosHist4->Draw("PE0");
-	CosHistNEUT4->Draw("same");
-	CosHistNEUTSF4->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMom4.pdf");
-
-	//5
-	c = new TCanvas;
-	gPad->SetLeftMargin(0.15); //left margin is 15 per cent of the pad width
-	CosHist5->GetYaxis()->SetTitleOffset(1.4);
-
-
-	CosTitleStr="";
-	CosTitleStr+=PBinsStr[5];
-	CosTitleStr+=" < P_{#mu} < ";
-	CosTitleStr+=PBinsStr[6];
-
-	CosHist5->GetXaxis()->SetTitle("sel. #mu^{+} cos#theta");
-	CosHist5->GetYaxis()->SetTitle("#frac{d#sigma}{dpd(cos#theta)} (cm^{2}/MeV/H_{2}O molecule)");
-	CosHist5->SetMarkerStyle(8);
-	CosHist5->SetMarkerSize(1);
-	CosHist5->SetMinimum(0);
-	CosHist5->SetTitle(CosTitleStr);
-
-	CosHistNEUT5->SetLineColor(kRed+2);
-	CosHistNEUT5->SetLineStyle(7);
-
-	CosHistNEUTSF5->SetLineColor(kGreen+2);
-	CosHistNEUTSF5->SetLineStyle(7);
-
-	CosHist5->Draw("PE0");
-	CosHistNEUT5->Draw("same");
-	CosHistNEUTSF5->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMom5.pdf");
-
-	//6
-	c = new TCanvas;
-	gPad->SetLeftMargin(0.15); //left margin is 15 per cent of the pad width
-	CosHist6->GetYaxis()->SetTitleOffset(1.4);
-
-
-	CosTitleStr="";
-	CosTitleStr+=PBinsStr[6];
-	CosTitleStr+=" < P_{#mu} < ";
-	CosTitleStr+=PBinsStr[7];
-
-	CosHist6->GetXaxis()->SetTitle("sel. #mu^{+} cos#theta");
-	CosHist6->GetYaxis()->SetTitle("#frac{d#sigma}{dpd(cos#theta)} (cm^{2}/MeV/H_{2}O molecule)");
-	CosHist6->SetMarkerStyle(8);
-	CosHist6->SetMarkerSize(1);
-	CosHist6->SetMinimum(0);
-	CosHist6->SetMaximum(1.8*CosHist6->GetMaximum());
-	CosHist6->SetTitle(CosTitleStr);
-
-	CosHistNEUT6->SetLineColor(kRed+2);
-	CosHistNEUT6->SetLineStyle(7);
-
-	CosHistNEUTSF6->SetLineColor(kGreen+2);
-	CosHistNEUTSF6->SetLineStyle(7);
-
-	CosHist6->Draw("PE0");
-	CosHistNEUT6->Draw("same");
-	CosHistNEUTSF6->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMom6.pdf");
-
-	//7
-	c = new TCanvas;
-	gPad->SetLeftMargin(0.15); //left margin is 15 per cent of the pad width
-	CosHist7->GetYaxis()->SetTitleOffset(1.4);
-
-
-	CosTitleStr="";
-	CosTitleStr+=PBinsStr[7];
-	CosTitleStr+=" < P_{#mu} < ";
-	CosTitleStr+=PBinsStr[8];
-
-	CosHist7->GetXaxis()->SetTitle("sel. #mu^{+} cos#theta");
-	CosHist7->GetYaxis()->SetTitle("#frac{d#sigma}{dpd(cos#theta)} (cm^{2}/MeV/H_{2}O molecule)");
-	CosHist7->SetMarkerStyle(8);
-	CosHist7->SetMarkerSize(1);
-	CosHist7->SetMinimum(0);
-	CosHist7->SetTitle(CosTitleStr);
-
-	CosHistNEUT7->SetLineColor(kRed+2);
-	CosHistNEUT7->SetLineStyle(7);
-
-	CosHistNEUTSF7->SetLineColor(kGreen+2);
-	CosHistNEUTSF7->SetLineStyle(7);
-
-	CosHist7->Draw("PE0");
-	CosHistNEUT7->Draw("same");
-	CosHistNEUTSF7->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/CosByMom7.pdf");
-
+	c->Print("./plots/XsecSliceLegend.pdf");
+	
 	// single diff
 	Float_t PBinsDraw[8]={400,530,670,800,1000,1380,2010,3410};
 	Float_t* PBinWidths = new Float_t[7];
@@ -589,7 +346,7 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 	MomFitResultNEUT->Draw("same");
 	MomFitResultNEUTSF->Draw("same");
 	leg->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/MomOverlay.pdf");
+	c->Print("./plots/MomOverlay.pdf");
 
 	// Covariance matrices
 	
@@ -617,7 +374,7 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 	gPad->Modified();
 	gPad->Update();
 
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/xsecCovMatrix.pdf");
+	c->Print("./plots/xsecCovMatrix.pdf");
 	delete c;
 	delete palette;
 	delete tempFitCovHist;
@@ -647,7 +404,7 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 	gPad->Modified();
 	gPad->Update();
 
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/xsecCovMatrixMom.pdf");
+	c->Print("./plots/xsecCovMatrixMom.pdf");
 	delete c;
 
 	//TODO: print results from DrawXsecFast for Latex
