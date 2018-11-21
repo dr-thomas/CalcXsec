@@ -174,18 +174,6 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 		cout << " | " << xsecStatNEUT[ii]->GetMean() << endl;
 	}
 
-	suffStat* sbStat = new suffStat(1e-39);
-	suffStat* sbStatN = new suffStat(1e-39);
-	suffStat* sbStatNSF = new suffStat(1e-39);
-	for(int ii=0; ii<nToys; ii++){
-		sbStat->Fill(singleBin[ii]);
-		sbStatN->Fill(singleBinN[ii]);
-		sbStatNSF->Fill(singleBinNSF[ii]);
-	}
-	cout << "Single Bin Results:" << endl;
-	cout << "Data: " << sbStat->GetMean() << " +- " << sbStat->GetRMS() << endl;
-	cout << "NEUT: " << sbStatN->GetMean() << endl;
-	cout << "NEUT SF: " << sbStatNSF->GetMean() << endl;
 
 	cout << "Drawing Cross Section Plots" << endl;
 
@@ -251,6 +239,26 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 			nFilled++;
 		}
 	}
+
+	// Print single bin results
+	suffStat* sbStat = new suffStat(1e-39);
+	suffStat* sbStatN = new suffStat(1e-39);
+	suffStat* sbStatNSF = new suffStat(1e-39);
+	for(int ii=0; ii<nToys; ii++){
+		sbStat->Fill(singleBin[ii]);
+		sbStatN->Fill(singleBinN[ii]);
+		sbStatNSF->Fill(singleBinNSF[ii]);
+	}
+	Float_t singleBinNuisN = 0.;
+	for(int ii=0; ii<19; ii++){
+		singleBinNuisN += nuisNeutRes->GetBinContent(ii+1);
+	}
+	cout << "Single Bin Results:" << endl;
+	cout << "Data: " << sbStat->GetMean() << " +- " << sbStat->GetRMS() << endl;
+	cout << "NEUT: " << sbStatN->GetMean() << endl;
+	cout << "NEUT SF: " << sbStatNSF->GetMean() << endl;
+	cout << "NUISANCE NEUT: " << singleBinNuisN << endl;
+
 
 	//Cos by momentum xsec slice 
 	TString PBinsStr[9]={"0","400","530","670","800","1000","1380","2010","3410"};
