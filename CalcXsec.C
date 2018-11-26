@@ -192,6 +192,9 @@ void CalcXsec(){
 
 	Float_t* binWidth = binHelper->GetBinWidths();
 
+	//TODO: should save all this to a root file, so no need to re-calc when
+	//      drawing.  
+	
 	//draw results
 	DrawXsec(nData,nSel,nGen,nGenSF,binWidth,intFlux,nTargets,nTargetsNomMC,nToys);
 	//for drawing, copy and paste gross code into new macro and pass around 
