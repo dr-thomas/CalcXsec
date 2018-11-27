@@ -11,6 +11,9 @@
 #include "/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/Macros/Phil_root-style-files-master/palettes.C"
 #include "TPaletteAxis.h"
 
+#include "../util/suffstat.hxx"
+#include "../util/suffstat.cxx"
+
 
 void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF, Float_t* binWidth, Float_t* intFlux, Float_t* nTargets, Float_t nTargetsNomMC, int nToys){
 	//calc xsec

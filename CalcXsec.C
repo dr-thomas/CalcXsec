@@ -11,8 +11,6 @@
 #include "./util/GetMCEventRateFromFitIPS.C"
 #include "./covmat/covmat.hxx"
 #include "./covmat/covmat.cxx"
-#include "./util/suffstat.hxx"
-#include "./util/suffstat.cxx"
 #include "./draw/DrawXsec.C"
 //to clone: git clone tcampbell <at> culogin01.colorado.edu:/usr/users/tcampbell/git/CalcXsec.git
 
@@ -198,6 +196,7 @@ void CalcXsec(){
 	
 	//draw results
 	DrawXsec(nData,nSel,nGen,nGenSF,binWidth,intFlux,nTargets,nTargetsNomMC,nToys);
+
 	TFile* outF = new TFile("outCalcXsec.root", "RECREATE");
 	TMatrixF nDataM(nToys, 19);
 	TMatrixF nSelM(nToys, 19);
