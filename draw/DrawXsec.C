@@ -16,6 +16,38 @@
 
 
 void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF, Float_t* binWidth, Float_t* intFlux, Float_t* nTargets, Float_t nTargetsNomMC, int nToys){
+	/*
+	//temp print stuff
+	suffStat** tempDataStat = new suffStat*[19];
+	suffStat** tempEffStat = new suffStat*[19];
+	for(int ii=0; ii<19; ii++){
+		tempDataStat[ii] = new suffStat();
+		tempEffStat[ii] = new suffStat();
+	}
+	suffStat* tempFluxStat = new suffStat();
+	suffStat* tempTargetsStat = new suffStat();
+	for(int ii=0; ii<nToys; ii++){
+		tempFluxStat->Fill(intFlux[ii]);
+		tempTargetsStat->Fill(nTargets[ii]);
+		for(int jj=0; jj<19; jj++){
+			tempDataStat[jj]->Fill(nData[ii][jj]/2.08*0.287);
+			tempEffStat[jj]->Fill(nSel[ii][jj]/nGen[ii][jj]);
+		}
+	}
+	for(int ii=0; ii<19; ii++){
+		cout << ii << "&";
+		cout << std::setprecision(4) << tempDataStat[ii]->GetMean();
+		cout << "&";
+		cout << std::setprecision(4) << tempEffStat[ii]->GetMean();
+		cout << "&";
+		cout << std::setprecision(4) << binWidth[ii];
+		cout << "\\\\" << endl;
+	}
+	cout << (tempFluxStat->GetMean()*0.287) << endl;
+	cout << tempTargetsStat->GetMean() << endl;
+	return;
+	*/
+
 	//calc xsec
 	suffStat** xsecStat = new suffStat*[19];
 	suffStat** xsecStatNEUT = new suffStat*[19];

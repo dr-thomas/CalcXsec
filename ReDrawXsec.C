@@ -7,26 +7,19 @@
 
 void ReDrawXsec(){
 
-	//TODO: something is broken between here and return
-
 	TFile* inF = new TFile("./outCalcXsec.root", "OPEN");
+
 	TMatrixF* nDataM = (TMatrixF*)inF->Get("nDataM");
 	TMatrixF* nSelM = (TMatrixF*)inF->Get("nSelM");
 	TMatrixF* nGenM = (TMatrixF*)inF->Get("nGenM");
 	TMatrixF* nGenSFM = (TMatrixF*)inF->Get("nGenSFM");
+
 
 	TVectorF* binWidthV = (TVectorF*)inF->Get("binWidthV");
 	TVectorF* intFluxV = (TVectorF*)inF->Get("intFluxV");
 	TVectorF* nTargetsV = (TVectorF*)inF->Get("nTargetsV");
 
 	int nToys = nDataM->GetNrows();
-	if(nToys==0){
-		return;
-	}
-
-	cout << "here" << endl;
-	return;
-
 
 	Float_t** nData = new Float_t*[nToys];
 	Float_t** nSel = new Float_t*[nToys];

@@ -219,13 +219,13 @@ void CalcXsec(){
 			nGenSFM(ii,jj) = nGen[ii][jj];
 		}
 	}
-	nDataM.Write();
-	nSelM.Write();
-	nGenM.Write();
-	nGenSFM.Write();
-	binWidthV.Write();
-	intFluxV.Write();
-	nTargetsV.Write();
+	nDataM.Write("nDataM");
+	nSelM.Write("nSelM");
+	nGenM.Write("nGenM");
+	nGenSFM.Write("nGenSFM");
+	binWidthV.Write("binWidthV");
+	intFluxV.Write("intFluxV");
+	nTargetsV.Write("nTargetsV");
 	outF->Write();
 	outF->Close();
 
