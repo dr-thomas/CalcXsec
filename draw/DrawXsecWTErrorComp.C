@@ -47,6 +47,7 @@ void DrawXsecWTErrorComp(Float_t** nData, Float_t** nDataB, Float_t** nSel, Floa
 			xsec*=1.0/binWidth[ii];
 			xsec*=1.0/intFlux[iToy];
 			xsec*=1.0/nTargets[iToy];
+			//xsec*=(1902./2655.)/nTargets[iToy];
 			xsecB*=1.0/binWidth[ii];
 			xsecB*=1.0/intFlux[iToy];
 			xsecB*=(1902./2655.)/nTargets[iToy];
@@ -309,11 +310,11 @@ void DrawXsecWTErrorComp(Float_t** nData, Float_t** nDataB, Float_t** nSel, Floa
 
 	CosHist1->Draw("PE0");
 	CosHistB1->Draw("same PE0");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMom1.pdf");
+	c->Print("~/Desktop/plots/CosByMom1.pdf");
 
 	c = new TCanvas;
 	leg->Draw();
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMomLegend.pdf");
+	c->Print("~/Desktop/plots/CosByMomLegend.pdf");
 
 	//2
 	c = new TCanvas;
@@ -342,7 +343,7 @@ void DrawXsecWTErrorComp(Float_t** nData, Float_t** nDataB, Float_t** nSel, Floa
 
 	CosHist2->Draw("PE0");
 	CosHistB2->Draw("same PE0");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMom2.pdf");
+	c->Print("~/Desktop/plots/CosByMom2.pdf");
 
 	//3
 	c = new TCanvas;
@@ -372,7 +373,7 @@ void DrawXsecWTErrorComp(Float_t** nData, Float_t** nDataB, Float_t** nSel, Floa
 
 	CosHist3->Draw("PE0");
 	CosHistB3->Draw("same PE0");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMom3.pdf");
+	c->Print("~/Desktop/plots/CosByMom3.pdf");
 
 	//4
 	c = new TCanvas;
@@ -402,7 +403,7 @@ void DrawXsecWTErrorComp(Float_t** nData, Float_t** nDataB, Float_t** nSel, Floa
 
 	CosHist4->Draw("PE0");
 	CosHistB4->Draw("same PE0");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMom4.pdf");
+	c->Print("~/Desktop/plots/CosByMom4.pdf");
 
 	//5
 	c = new TCanvas;
@@ -432,7 +433,7 @@ void DrawXsecWTErrorComp(Float_t** nData, Float_t** nDataB, Float_t** nSel, Floa
 
 	CosHist5->Draw("PE0");
 	CosHistB5->Draw("same PE0");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMom5.pdf");
+	c->Print("~/Desktop/plots/CosByMom5.pdf");
 
 	//6
 	c = new TCanvas;
@@ -462,7 +463,7 @@ void DrawXsecWTErrorComp(Float_t** nData, Float_t** nDataB, Float_t** nSel, Floa
 
 	CosHist6->Draw("PE0");
 	CosHistB6->Draw("same PE0");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMom6.pdf");
+	c->Print("~/Desktop/plots/CosByMom6.pdf");
 
 	//7
 	c = new TCanvas;
@@ -491,7 +492,7 @@ void DrawXsecWTErrorComp(Float_t** nData, Float_t** nDataB, Float_t** nSel, Floa
 
 	CosHist7->Draw("PE0");
 	CosHistB7->Draw("same PE0");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/CosByMom7.pdf");
+	c->Print("~/Desktop/plots/CosByMom7.pdf");
 
 	// single diff
 	Float_t PBinsDraw[8]={400,530,670,800,1000,1380,2010,3410};
@@ -525,5 +526,5 @@ void DrawXsecWTErrorComp(Float_t** nData, Float_t** nDataB, Float_t** nSel, Floa
 
 	MomFitResult->Draw("PE0");
 	leg->Draw("same");
-	c->Print("/Users/thomascampbell/Documents/Research/NewCC0piAnalysisPlots/Xsec/Bcomp/MomOverlay.pdf");
+	c->Print("~/Desktop/plots/MomOverlay.pdf");
 }

@@ -1,6 +1,7 @@
 #include <TString.h>
 #include <TFile.h>
 #include <TMatrixD.h>
+#include <TMatrixF.h>
 #include <TTree.h>
 #include <TAxis.h>
 #include <TH1F.h>
@@ -13,7 +14,7 @@
 #include "./util/suffstat.hxx"
 #include "./util/suffstat.cxx"
 #include "./draw/DrawXsec.C"
-//to clone: git clone tcampbell@culogin01.colorado.edu:/usr/users/tcampbell/git/CalcXsec.git
+//to clone: git clone tcampbell <at> culogin01.colorado.edu:/usr/users/tcampbell/git/CalcXsec.git
 
 int GetFluxBinIndex(Float_t);
 bool isInWTFV(Float_t* pos);
@@ -197,6 +198,38 @@ void CalcXsec(){
 	
 	//draw results
 	DrawXsec(nData,nSel,nGen,nGenSF,binWidth,intFlux,nTargets,nTargetsNomMC,nToys);
+	TFile* outF = new TFile("outCalcXsec.root", "RECREATE");
+	TMatrixF nDataM(nToys, 19);
+	TMatrixF nSelM(nToys, 19);
+	TMatrixF nGenM(nToys, 19);
+	TMatrixF nGenSFM(nToys, 19);
+
+	TVectorF binWidthV(19);
+	for(int ii=0; ii<19; ii++){
+		binWidthV(ii) = binWidth[ii];
+	}
+	TVectorF intFluxV(nToys);
+	TVectorF nTargetsV(nToys);
+	for(int ii=0; ii<nToys; ii++){
+		intFluxV(ii) = intFlux[ii];
+		nTargetsV(ii) = nTargets[ii];
+		for(int jj=0; jj<19; jj++){
+			nDataM(ii,jj) = nData[ii][jj];
+			nSelM(ii,jj) = nSel[ii][jj];
+			nGenM(ii,jj) = nGen[ii][jj];
+			nGenSFM(ii,jj) = nGen[ii][jj];
+		}
+	}
+	nDataM.Write();
+	nSelM.Write();
+	nGenM.Write();
+	nGenSFM.Write();
+	binWidthV.Write();
+	intFluxV.Write();
+	nTargetsV.Write();
+	outF->Write();
+	outF->Close();
+
 	//for drawing, copy and paste gross code into new macro and pass around 
 	//the nesseary calculated stuff 
 	//-> or just take style stuff and write better/neater 

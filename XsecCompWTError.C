@@ -13,16 +13,15 @@
 #include "./util/suffstat.hxx"
 #include "./util/suffstat.cxx"
 #include "./draw/DrawXsecWTErrorComp.C"
-//to clone: git clone tcampbell@ens-hpc.engr.colostate.edu:/home/other/tcampbell/git/CalcXsec.git
+//to clone: git clone tcampbell <at> ens-hpc.engr.colostate.edu:/home/other/tcampbell/git/CalcXsec.git
 
 int GetFluxBinIndex(Float_t);
 bool isInWTFV(Float_t* pos);
 
 void XsecCompWTError(){
 	//define files
-	//TString inFMCEffStr = "/Users/thomascampbell/Desktop/GenCheck/GenWithFlag.root";
 	TString inFMCEffStr = "./GenWithFlag.root";
-	TString inFFitStr = "/Users/thomascampbell/p0dCCAnalysis/FitResults/DataFits/NEUT/fitBaseOutNoReg.root";
+	TString inFFitStr = "/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/DataFits/NEUT/fitBaseOutNoReg.root";
 
 	TFile* inFMCEff = new TFile(inFMCEffStr,"OPEN");
 	TFile* inFFit = new TFile(inFFitStr,"OPEN");
@@ -41,7 +40,7 @@ void XsecCompWTError(){
 	//set up cov matrices 
 	
 	//flux
-	TFile *finFluxCov = new TFile("/Users/thomascampbell/p0dCCAnalysis/FitResults/Macros/XsecDrawFiles/flux_covariance_banff_13av1.1.root","OPEN");
+	TFile *finFluxCov = new TFile("/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/Macros/XsecDrawFiles/flux_covariance_banff_13av1.1.root","OPEN");
 	TAxis* numubBins = (TAxis*)finFluxCov->Get("nd5_anumode_numub_bins");
 	TMatrixDSym* covInFlux   = (TMatrixDSym*)finFluxCov->Get("total_flux_cov");
 
@@ -116,7 +115,7 @@ void XsecCompWTError(){
 			if(fluxBin>-1) weight*=(1.+(fluxCov->varVec[fluxBin]));
 			if(weight>-1e-6 && weight<10.) nGenB[iToy][bin]+=weight;
 			else nGenB[iToy][bin]+=1.;
-			weight*=genEvt->weightSF2RFG;
+			//weight*=genEvt->weightSF2RFG;
 			if(weight>-1e-6 && weight<10.) nGen[iToy][bin]+=weight;
 			else nGen[iToy][bin]+=1.;
 		}
@@ -138,7 +137,7 @@ void XsecCompWTError(){
 				if(fluxBin>-1) weight*=(1.+(fluxCov->varVec[fluxBin]));
 				if(weight>-1e-6 && weight<10.) nSelB[iToy][binSel]+=weight;
 				else nSelB[iToy][binSel]+=1.;
-				weight*=selEvt->weightSF2RFG;
+				//weight*=selEvt->weightSF2RFG;
 				if(weight>-1e-6 && weight<10.) nSel[iToy][binSel]+=weight;
 				else nSel[iToy][binSel]+=1.;
 			}
@@ -176,7 +175,7 @@ void XsecCompWTError(){
 
 	//integrated flux
 	//correleted with efficiency using prefit covariacne, no correlations to data
-	TFile* inFflux = new TFile("/Users/thomascampbell/p0dCCAnalysis/FitResults/Macros/tuned13av1.1/run5c/nd5_tuned13av1.1_13anom_run5c_antinumode_fine.root");
+	TFile* inFflux = new TFile("/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/Macros/tuned13av1.1/run5c/nd5_tuned13av1.1_13anom_run5c_antinumode_fine.root");
 	Double_t FluxBinsPass[12]={0.0,0.4,0.5,0.6,0.7,1.0,1.5,2.5,3.5,5.0,7.0,30.0};
 	TH1F* tempFluxHist = (TH1F*)inFflux->Get("enu_nd5_tuned13a_numub");
 	TH1F* FluxHist = (TH1F*)tempFluxHist->Rebin(11,"FluxHist",FluxBinsPass);
