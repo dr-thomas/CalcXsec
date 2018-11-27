@@ -216,7 +216,7 @@ void CalcXsec(){
 			nDataM(ii,jj) = nData[ii][jj];
 			nSelM(ii,jj) = nSel[ii][jj];
 			nGenM(ii,jj) = nGen[ii][jj];
-			nGenSFM(ii,jj) = nGen[ii][jj];
+			nGenSFM(ii,jj) = nGenSF[ii][jj];
 		}
 	}
 	nDataM.Write("nDataM");
