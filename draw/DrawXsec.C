@@ -6,6 +6,7 @@
 #include <TStyle.h>
 #include <TH1D.h>
 #include <TH2D.h>
+#include <TVector.h>
 
 #include "TColor.h"
 #include "/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/Macros/Phil_root-style-files-master/palettes.C"
@@ -449,6 +450,41 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 
 	c->Print("./plots/xsecCovMatrixMom.pdf");
 	delete c;
+
+	//Chi2s
+	FitCov.Invert();
+	TVectorD chiVec1(19);
+	TVectorD chiVec2(19);
+
+	for(int ii=0; ii<19; ii++){
+		chiVec1(ii) = (xsecStat[ii]->GetMean() - xsecStatNEUT[ii]->GetMean())/xsecStat[ii]->GetMean();
+	}
+	chiVec2 = FitCov*chiVec1;
+	Float_t tempChi2=0;
+	for(int ii=0; ii<19; ii++){
+		tempChi2 += chiVec1(ii)*chiVec2(ii);
+	}
+	cout << "Chi2 data to NEUT: " << tempChi2/19. << endl;
+
+	for(int ii=0; ii<19; ii++){
+		chiVec1(ii) = (xsecStat[ii]->GetMean() - xsecStatNEUTSF[ii]->GetMean())/xsecStat[ii]->GetMean();
+	}
+	chiVec2 = FitCov*chiVec1;
+	tempChi2=0;
+	for(int ii=0; ii<19; ii++){
+		tempChi2 += chiVec1(ii)*chiVec2(ii);
+	}
+	cout << "Chi2 data to NEUT SF: " << tempChi2/19. << endl;
+
+	for(int ii=0; ii<19; ii++){
+		chiVec1(ii) = (xsecStat[ii]->GetMean() - nuisNeutRes->GetBinContent(ii+1))/xsecStat[ii]->GetMean();
+	}
+	chiVec2 = FitCov*chiVec1;
+	tempChi2=0;
+	for(int ii=0; ii<19; ii++){
+		tempChi2 += chiVec1(ii)*chiVec2(ii);
+	}
+	cout << "Chi2 data to NUISANCE NEUT: " << tempChi2/19. << endl;
 
 	//TODO: print results from DrawXsecFast for Latex
 	

@@ -23,6 +23,8 @@ void CalcXsec(){
 	//TString inFMCEffStr = "/Users/thomascampbell/Desktop/GenCheck/GenWithFlag.root";
 	TString inFMCEffStr = "./GenWithFlag.root";
 	TString inFFitStr = "/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/DataFits/NEUT/fitBaseOutNoReg.root";
+	// Regularized
+	//TString inFFitStr = "/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/DataFits/NEUT/fitBaseOutP_1.root";
 
 	TFile* inFMCEff = new TFile(inFMCEffStr,"OPEN");
 	TFile* inFMCGenie = new TFile(inFMCGenieStr,"OPEN");
