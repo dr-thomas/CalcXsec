@@ -108,15 +108,15 @@ void DrawXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF,
 			xsec*=1.0/nTargets[iToy];
 			xsecStat[ii]->Fill(xsec);
 			xsec4cov[iToy][ii] = xsec*(1e40);
-			singleBin[iToy]+=xsec;
+			singleBin[iToy]+=xsec*binWidth[ii];
 			Float_t xsecN = nGen[iToy][ii]/(binWidth[ii]*intFlux[iToy]);
 			Float_t xsecNSF = nGenSF[iToy][ii]/(binWidth[ii]*intFlux[iToy]);
 			xsecN*=1.0/nTargetsNomMC;
 			xsecNSF*=1.0/nTargetsNomMC;
 			xsecStatNEUT[ii]->Fill(xsecN);
 			xsecStatNEUTSF[ii]->Fill(xsecNSF);
-			singleBinN[iToy]+=xsecN;
-			singleBinNSF[iToy]+=xsecNSF;
+			singleBinN[iToy]+=xsecN*binWidth[ii];
+			singleBinNSF[iToy]+=xsecNSF*binWidth[ii];
 			//Momentum single (Note: not normalized by bin width)
 			xsec*=binWidth[ii];
 			xsecN*=binWidth[ii];

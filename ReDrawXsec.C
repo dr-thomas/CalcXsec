@@ -3,7 +3,8 @@
 #include <TMatrixD.h>
 #include <TVectorF.h>
 
-#include "./draw/DrawXsec.C"
+//#include "./draw/DrawXsec.C"
+#include "./draw/DrawCallumXsec.C"
 
 void ReDrawXsec(){
 
@@ -53,5 +54,5 @@ void ReDrawXsec(){
 	}
 
 	Float_t nTargetsNomMC=6.46e+28; 
-	DrawXsec(nData,nSel,nGen,nGenSF,binWidth,intFlux,nTargets,nTargetsNomMC,nToys);
+	DrawCallumXsec(nData,nSel,nGen,nGenSF,binWidth,intFlux,nTargets,nTargetsNomMC,nToys);
 }
