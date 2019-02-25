@@ -65,12 +65,27 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 	//NUISANCE
 	TFile* inFnuisance = new TFile("rootFiles/nuiscompAnuCiroScaled.root", "OPEN");
 	TH1F* nuisNeutRes = (TH1F*) inFnuisance->Get("T2K_CC0pi_XSec_2DPcos_anu_P0D_MC");
+	TFile* inFnuisanceNeut5_4_0 = new TFile("~/Downloads/neut_5.4.0_T2K-P0D_H2O.root", "OPEN");
+	TH1F* nuisNeutResNeut5_4_0 = (TH1F*) inFnuisanceNeut5_4_0->Get("T2K_CC0pi_XSec_2DPcos_anu_P0D_MC");
+	TFile* inFnuisanceGENIE = new TFile("~/Downloads/genie_r-2-12-10_T2K-P0D_AntiNuMuCC0pi_H2O.root", "OPEN");
+	TH1F* nuisNeutResGENIE = (TH1F*) inFnuisanceGENIE->Get("T2K_CC0pi_XSec_2DPcos_anu_P0D_MC");
+	//TFile* inFnuisanceNuWro = new TFile("~/Downloads/nuwro_18.02.1_T2K-P0D_AntiNuMuCC0pi_H2O.root", "OPEN");
+	TFile* inFnuisanceNuWro = new TFile("~/Downloads/nuwro_18.02.1_T2K-P0D_AntiNuMuCC0pi_H2O-1.root", "OPEN");
+	TH1F* nuisNeutResNuWro = (TH1F*) inFnuisanceNuWro->Get("T2K_CC0pi_XSec_2DPcos_anu_P0D_MC");
 
+	//TFile* inFnuisanceNuWro1 = new TFile("~/Downloads/nuwro_18.02.1_T2K-P0D_AntiNuMuCC0pi_H2O-1.root", "OPEN");
+	//TFile* inFnuisanceNuWro1 = new TFile("~/Downloads/nuwro_18.02.1_T2K-P0D_AntiNuMuCC0pi_H2O-3.root", "OPEN");
+	TFile* inFnuisanceNuWro1 = new TFile("~/Downloads/nuwro_18.02.1_T2K-P0D_AntiNuMuCC0pi_H2O-4.root", "OPEN");
+	TH1F* nuisNeutResNuWro1 = (TH1F*) inFnuisanceNuWro1->Get("T2K_CC0pi_XSec_2DPcos_anu_P0D_MC");
 
 	TH1F** CosHists = new TH1F*[7];
 	TH1F** CosHistsNEUT = new TH1F*[7];
 	TH1F** CosHistsNEUTSF = new TH1F*[7];
 	TH1F** CosHistsNuisNEUT = new TH1F*[7];
+	TH1F** CosHistsNuisNEUT5_4_0 = new TH1F*[7];
+	TH1F** CosHistsNuisGENIE = new TH1F*[7];
+	TH1F** CosHistsNuisNuWro = new TH1F*[7];
+	TH1F** CosHistsNuisNuWro1 = new TH1F*[7];
 
 	for(int ii=0; ii<7; ii++){
 		int tempNbins=0;
@@ -91,6 +106,19 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 		labelStr = "CosHistsNuisNEUT";
 		labelStr += ii;
 		CosHistsNuisNEUT[ii] = new TH1F(labelStr,"",tempNbins,CosBinDraw[ii+1]);
+		labelStr = "CosHistsNuisNEUT5_4_0";
+		labelStr += ii;
+		CosHistsNuisNEUT5_4_0[ii] = new TH1F(labelStr,"",tempNbins,CosBinDraw[ii+1]);
+		labelStr = "CosHistsNuisGENIE";
+		labelStr += ii;
+		CosHistsNuisGENIE[ii] = new TH1F(labelStr,"",tempNbins,CosBinDraw[ii+1]);
+		labelStr = "CosHistsNuisNuWro";
+		labelStr += ii;
+		CosHistsNuisNuWro[ii] = new TH1F(labelStr,"",tempNbins,CosBinDraw[ii+1]);
+		labelStr = "CosHistsNuisNuWro1";
+		labelStr += ii;
+		CosHistsNuisNuWro1[ii] = new TH1F(labelStr,"",tempNbins,CosBinDraw[ii+1]);
+
 	}
 
 	int nFilled=0;
@@ -107,6 +135,10 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 			CosHistsNEUT[ii]->SetBinContent(jj+1,xsecStatNEUT[nFilled]->GetMean());
 			CosHistsNEUTSF[ii]->SetBinContent(jj+1,xsecStatNEUTSF[nFilled]->GetMean());
 			CosHistsNuisNEUT[ii]->SetBinContent(jj+1, nuisNeutRes->GetBinContent(nFilled+1));
+			CosHistsNuisNEUT5_4_0[ii]->SetBinContent(jj+1, nuisNeutResNeut5_4_0->GetBinContent(nFilled+1));
+			CosHistsNuisGENIE[ii]->SetBinContent(jj+1, nuisNeutResGENIE->GetBinContent(nFilled+1));
+			CosHistsNuisNuWro[ii]->SetBinContent(jj+1, nuisNeutResNuWro->GetBinContent(nFilled+1));
+			CosHistsNuisNuWro1[ii]->SetBinContent(jj+1, nuisNeutResNuWro1->GetBinContent(nFilled+1));
 			nFilled++;
 		}
 	}
@@ -123,7 +155,7 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 	gStyle->SetTitleSize(0.10, "xyzt");
 	gStyle->SetTitleSize(0.15, "t");
 	gStyle->SetTitleX(0.55);
-	gStyle->SetTitleY(0.24);
+	gStyle->SetTitleY(0.23);
 	gStyle->SetTitleW(0.8);
 	gStyle->SetTitleH(0.11);
 	gStyle->SetOptTitle(1);
@@ -164,10 +196,35 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 		CosHists[ii]->SetTitle(CosTitleStr);
 
 		CosHists[ii]->Scale(1e41);
-		CosHistsNEUT[ii]->Scale(1e41);
 
-		float maxval = CosHists[ii]->GetMaximum();
-		maxval *= 1.5;
+		CosHistsNuisNEUT[ii]->Scale(1e41);
+		CosHistsNuisNEUT[ii]->SetLineColor(kRed);
+		CosHistsNuisNEUT[ii]->SetLineWidth(3);
+		CosHistsNuisNEUT[ii]->SetLineStyle(7);
+
+		CosHistsNuisNEUT5_4_0[ii]->Scale(1e41);
+		CosHistsNuisNEUT5_4_0[ii]->SetLineColor(kBlue);
+		CosHistsNuisNEUT5_4_0[ii]->SetLineWidth(3);
+		CosHistsNuisNEUT5_4_0[ii]->SetLineStyle(8);
+
+		CosHistsNuisGENIE[ii]->Scale(1e41);
+		CosHistsNuisGENIE[ii]->SetLineColor(kGreen);
+		CosHistsNuisGENIE[ii]->SetLineWidth(3);
+		CosHistsNuisGENIE[ii]->SetLineStyle(9);
+
+		CosHistsNuisNuWro[ii]->Scale(1e41);
+		CosHistsNuisNuWro[ii]->SetLineColor(kRed);
+		CosHistsNuisNuWro[ii]->SetLineWidth(3);
+		CosHistsNuisNuWro[ii]->SetLineStyle(7);
+
+		CosHistsNuisNuWro1[ii]->Scale(1e41);
+		//CosHistsNuisNuWro1[ii]->SetLineColor(kBlue);
+		CosHistsNuisNuWro1[ii]->SetLineColor(kRed);
+		CosHistsNuisNuWro1[ii]->SetLineWidth(3);
+		CosHistsNuisNuWro1[ii]->SetLineStyle(7);
+
+		float maxval = CosHistsNuisNuWro[ii]->GetMaximum();
+		maxval *= 1.2;
 		CosHists[ii]->SetMaximum(maxval);
 		CosHists[ii]->SetMinimum(0);
 
@@ -181,12 +238,12 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 		CosHists[ii]->SetLineColor(kBlack);
 		CosHists[ii]->SetLineWidth(3);
 
-		CosHistsNEUT[ii]->SetLineColor(kRed);
-		CosHistsNEUT[ii]->SetLineWidth(3);
-		CosHistsNEUT[ii]->SetLineStyle(7);
-
 		CosHists[ii]->Draw("PE0");
-		CosHistsNEUT[ii]->Draw("same hist");
+		//CosHistsNuisNEUT[ii]->Draw("same hist");
+		CosHistsNuisNEUT5_4_0[ii]->Draw("same hist");
+		CosHistsNuisGENIE[ii]->Draw("same hist");
+		//CosHistsNuisNuWro[ii]->Draw("same hist");
+		CosHistsNuisNuWro1[ii]->Draw("same hist");
 
         gPad->SetTopMargin(0.05);
         gPad->SetBottomMargin(0.10);  
@@ -205,11 +262,16 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
     leg->SetTextSize(0.09);
     leg->SetLineWidth(0);
     leg->AddEntry(CosHists[0], "DATA", "le");
-    leg->AddEntry(CosHistsNEUT[0], "NEUT v5.3.3", "l");
+    //leg->AddEntry(CosHistsNuisNEUT[0], "NEUT v5.?.?", "l");
+    leg->AddEntry(CosHistsNuisNEUT5_4_0[0], "NEUT v5.4.0", "l");
+    leg->AddEntry(CosHistsNuisGENIE[0], "GENIE v2.12.10", "l");
+    leg->AddEntry(CosHistsNuisNuWro1[0], "NuWro v18.02.1", "l");
+    //leg->AddEntry(CosHistsNuisNuWro[0], "NuWro old", "l");
+    //leg->AddEntry(CosHistsNuisNuWro1[0], "NuWro new", "l");
     leg->Draw();
     gPad->Update();
     
     subPad->Update();
     c->Update();
-    c->SaveAs("~/Desktop/tn328_updated.png");
+    c->SaveAs("~/Desktop/tn328_updated.eps");
 }
