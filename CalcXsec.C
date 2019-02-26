@@ -18,8 +18,6 @@ bool isInWTFV(Float_t* pos);
 
 void CalcXsec(){
 	//define files
-	TString inFMCGenieStr = "/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/Macros/XsecDrawFiles/GenWithFlagGENIE.root";
-	//TString inFMCEffStr = "/Users/thomascampbell/Desktop/GenCheck/GenWithFlag.root";
 	TString inFMCEffStr = "./GenWithFlag.root";
 	TString inFFitStr = "/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/DataFits/NEUT/fitBaseOutNoReg.root";
 	// Regularized
@@ -39,14 +37,6 @@ void CalcXsec(){
 	p0dCCEvent* selEvt = new p0dCCEvent();
 	selEvt->SetBranchAddresses(defaultT, false, false);
 	int nEntriesD = defaultT->GetEntries();
-
-	//Genie
-	//TODO: add weight to Genie stuff, re-produce those comparisions...
-	//(is there even flux weighting for GENIE MC?!?!)
-	TTree* truthTG = (TTree*)inFMCGenie->Get("outTtruth");
-	p0dCCEvent* genEvtGENIE = new p0dCCEvent();
-	genEvtGENIE->SetBranchAddresses(truthTG, true, true);
-	int nEntriesTruthG = truthTG->GetEntries();
 
 	//set up cov matrices 
 	
