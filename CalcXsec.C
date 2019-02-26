@@ -12,7 +12,6 @@
 #include "./covmat/covmat.hxx"
 #include "./covmat/covmat.cxx"
 #include "./draw/DrawXsec.C"
-//to clone: git clone tcampbell <at> culogin01.colorado.edu:/usr/users/tcampbell/git/CalcXsec.git
 
 int GetFluxBinIndex(Float_t);
 bool isInWTFV(Float_t* pos);
