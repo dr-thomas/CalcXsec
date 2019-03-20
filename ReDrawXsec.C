@@ -15,7 +15,6 @@ void ReDrawXsec(){
 	TMatrixF* nGenM = (TMatrixF*)inF->Get("nGenM");
 	TMatrixF* nGenSFM = (TMatrixF*)inF->Get("nGenSFM");
 
-
 	TVectorF* binWidthV = (TVectorF*)inF->Get("binWidthV");
 	TVectorF* intFluxV = (TVectorF*)inF->Get("intFluxV");
 	TVectorF* nTargetsV = (TVectorF*)inF->Get("nTargetsV");

@@ -16,6 +16,8 @@
 #include "../util/suffstat.hxx"
 #include "../util/suffstat.cxx"
 
+#include "TMatrixF.h"
+
 
 void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** nGenSF, Float_t* binWidth, Float_t* intFlux, Float_t* nTargets, Float_t nTargetsNomMC, int nToys){
 
@@ -48,6 +50,46 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 		}
 	}
 
+	Float_t** xsecCovMat = new Float_t*[19];
+	for(int ii=0; ii<19; ii++){
+		xsecCovMat[ii] = new Float_t[19];
+	}
+	for(int ii=0; ii<19; ii++){
+		for(int jj=0; jj<19; jj++){
+			xsecCovMat[ii][jj] = 0.;
+		}
+	}
+
+	for(int iToy=0; iToy<nToys; iToy++){
+		for(int ii=0; ii<19; ii++){
+			Float_t xsec_i = nData[iToy][ii]/(nSel[iToy][ii]/nGen[iToy][ii]);
+			xsec_i*=1.0/binWidth[ii];
+			xsec_i*=1.0/intFlux[iToy];
+			xsec_i*=1.0/nTargets[iToy];
+			for(int jj=0; jj<19; jj++){
+				Float_t xsec_j = nData[iToy][jj]/(nSel[iToy][jj]/nGen[iToy][jj]);
+				xsec_j*=1.0/binWidth[jj];
+				xsec_j*=1.0/intFlux[iToy];
+				xsec_j*=1.0/nTargets[iToy];
+
+				xsecCovMat[ii][jj] += (xsec_i-xsecStat[ii]->GetMean())/xsecStat[ii]->GetMean()*(xsec_j-xsecStat[jj]->GetMean())/xsecStat[jj]->GetMean();
+			}
+		}
+	}
+	for(int ii=0; ii<19; ii++){
+		for(int jj=0; jj<19; jj++){
+			xsecCovMat[ii][jj] *= (Float_t)1./nToys;
+		}
+	}
+
+	TMatrixF xsecCov(19,19);
+	for(int ii=0; ii<19; ii++){
+		for(int jj=0; jj<19; jj++){
+			xsecCov(ii,jj) = xsecCovMat[ii][jj];
+		}
+	}
+	xsecCov.Invert();
+
 	cout << "Drawing Cross Section Plots" << endl;
 
 	Float_t CosBinDraw[9][4]={
@@ -77,6 +119,42 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 	//TFile* inFnuisanceNuWro1 = new TFile("~/Downloads/nuwro_18.02.1_T2K-P0D_AntiNuMuCC0pi_H2O-3.root", "OPEN");
 	TFile* inFnuisanceNuWro1 = new TFile("~/Downloads/nuwro_18.02.1_T2K-P0D_AntiNuMuCC0pi_H2O-4.root", "OPEN");
 	TH1F* nuisNeutResNuWro1 = (TH1F*) inFnuisanceNuWro1->Get("T2K_CC0pi_XSec_2DPcos_anu_P0D_MC");
+
+	//chi2s
+	TVector resNeut(19);
+	for(int ii=0; ii<19; ii++){
+		resNeut(ii) = (nuisNeutResNeut5_4_0->GetBinContent(ii+1) - xsecStat[ii]->GetMean())/xsecStat[ii]->GetMean();
+	}
+	Float_t chi2resNeut = 0.;
+	TVector resNeut1 = xsecCov*resNeut;
+	for(int ii=0; ii<19; ii++){
+		chi2resNeut += resNeut(ii)*resNeut1(ii);
+	}
+	cout << "chi2 to NEUT: " << chi2resNeut << endl;
+
+	TVector resGenie(19);
+	for(int ii=0; ii<19; ii++){
+		resGenie(ii) = (nuisNeutResGENIE->GetBinContent(ii+1) - xsecStat[ii]->GetMean())/xsecStat[ii]->GetMean();
+	}
+	Float_t chi2resGenie = 0.;
+	TVector resGenie1 = xsecCov*resGenie;
+	for(int ii=0; ii<19; ii++){
+		chi2resGenie += resGenie(ii)*resGenie1(ii);
+	}
+	cout << "chi2 to GENIE: " << chi2resGenie << endl;
+
+	TVector resNuWro(19);
+	for(int ii=0; ii<19; ii++){
+		resNuWro(ii) = (nuisNeutResNuWro1->GetBinContent(ii+1) - xsecStat[ii]->GetMean())/xsecStat[ii]->GetMean();
+	}
+	Float_t chi2resNuWro = 0.;
+	TVector resNuWro1 = xsecCov*resNuWro;
+	for(int ii=0; ii<19; ii++){
+		chi2resNuWro += resNuWro(ii)*resNuWro1(ii);
+	}
+	cout << "chi2 to NuWro: " << chi2resNuWro << endl;
+
+
 
 	TH1F** CosHists = new TH1F*[7];
 	TH1F** CosHistsNEUT = new TH1F*[7];

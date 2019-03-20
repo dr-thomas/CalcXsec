@@ -219,10 +219,6 @@ void CalcXsec(){
 	nTargetsV.Write("nTargetsV");
 	outF->Write();
 	outF->Close();
-
-	//for drawing, copy and paste gross code into new macro and pass around 
-	//the nesseary calculated stuff 
-	//-> or just take style stuff and write better/neater 
 }
 
 int GetFluxBinIndex(Float_t nuE){
