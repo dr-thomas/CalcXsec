@@ -50,6 +50,7 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 		}
 	}
 
+	//calc xsec relative covariance matrix
 	Float_t** xsecCovMat = new Float_t*[19];
 	for(int ii=0; ii<19; ii++){
 		xsecCovMat[ii] = new Float_t[19];
@@ -88,7 +89,6 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 			xsecCov(ii,jj) = xsecCovMat[ii][jj];
 		}
 	}
-	xsecCov.Invert();
 
 	cout << "Drawing Cross Section Plots" << endl;
 
@@ -121,6 +121,8 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 	TH1F* nuisNeutResNuWro1 = (TH1F*) inFnuisanceNuWro1->Get("T2K_CC0pi_XSec_2DPcos_anu_P0D_MC");
 
 	//chi2s
+	xsecCov.Invert();
+
 	TVector resNeut(19);
 	for(int ii=0; ii<19; ii++){
 		resNeut(ii) = (nuisNeutResNeut5_4_0->GetBinContent(ii+1) - xsecStat[ii]->GetMean())/xsecStat[ii]->GetMean();
