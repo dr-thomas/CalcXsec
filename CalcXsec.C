@@ -19,12 +19,11 @@ bool isInWTFV(Float_t* pos);
 void CalcXsec(){
 	//define files
 	TString inFMCEffStr = "./GenWithFlag.root";
-	TString inFFitStr = "/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/DataFits/NEUT/fitBaseOutNoReg.root";
+	//TString inFFitStr = "/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/DataFits/NEUT/fitBaseOutNoReg.root";
 	// Regularized
-	//TString inFFitStr = "/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/DataFits/NEUT/fitBaseOutP_1.root";
+	TString inFFitStr = "/Volumes/ThomasDrive/p0dCCAnalysis/FitResults/DataFits/NEUT/fitBaseOutP_1.root";
 
 	TFile* inFMCEff = new TFile(inFMCEffStr,"OPEN");
-	TFile* inFMCGenie = new TFile(inFMCGenieStr,"OPEN");
 	TFile* inFFit = new TFile(inFFitStr,"OPEN");
 
 	//define trees
@@ -91,7 +90,9 @@ void CalcXsec(){
 	int nToys=400;//max 400
 
 	for(int iEntry=0; iEntry<nEntriesTruth; iEntry++){
-		if((iEntry%10000)==0) cout << iEntry*1.0/nEntriesTruth << endl;
+		if((iEntry%10000)==0){
+			cout << iEntry*1.0/nEntriesTruth << endl;
+		}
 		truthT->GetEntry(iEntry);
 		int bin=binHelper->GetBinIPS(genEvt->truelepton_mom, genEvt->truelepton_costheta);
 		if((!genEvt->IsOnWater) || bin<0) continue;

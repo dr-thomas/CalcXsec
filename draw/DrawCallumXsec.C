@@ -83,12 +83,35 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 		}
 	}
 
+	TFile* outFDR = new TFile("DataRelease.root", "RECREATE");
+	//TODO: print central values and cov matrix to text file, root file
+	TH1F* xsecDataRelease = new TH1F("xsecDataRelease", "cross_section_central_values", 19,0,19);
+	TH2F* covDataRelease = new TH2F("covDataRelease", "cross_section_covariance_matrix", 19,0,19,19,0,19);
+	
+	cout << "bin i: xsec[i]" << endl;
+	for(int ii=0; ii<19; ii++){
+		xsecDataRelease->SetBinContent(ii+1, xsecStat[ii]->GetMean());
+		cout << ii+1 << ": " << xsecStat[ii]->GetMean() << endl;
+	}
+	cout << "bin i, bin j: cov[i][j]" << endl;
+	for(int ii=0; ii<19; ii++){
+		for(int jj=0; jj<19; jj++){
+			covDataRelease->SetBinContent(ii+1,jj+1, xsecCovMat[ii][jj]);
+			cout << ii+1 << ", " << jj+1 << ": " << xsecCovMat[ii][jj] << endl;
+		}
+	}
+
 	TMatrixF xsecCov(19,19);
 	for(int ii=0; ii<19; ii++){
 		for(int jj=0; jj<19; jj++){
 			xsecCov(ii,jj) = xsecCovMat[ii][jj];
 		}
 	}
+	xsecDataRelease->Write();
+	covDataRelease->Write();
+	outFDR->Write();
+	outFDR->Close();
+
 
 	cout << "Drawing Cross Section Plots" << endl;
 
@@ -109,6 +132,8 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 	TH1F* nuisNeutRes = (TH1F*) inFnuisance->Get("T2K_CC0pi_XSec_2DPcos_anu_P0D_MC");
 	TFile* inFnuisanceNeut5_4_0 = new TFile("~/Downloads/neut_5.4.0_T2K-P0D_H2O.root", "OPEN");
 	TH1F* nuisNeutResNeut5_4_0 = (TH1F*) inFnuisanceNeut5_4_0->Get("T2K_CC0pi_XSec_2DPcos_anu_P0D_MC");
+	TFile* inFnuisanceNeut5_4_1 = new TFile("~/Downloads/neut_5.4.1_T2K-P0D_AntiNuMuCC0pi_H2O.root", "OPEN");
+	TH1F* nuisNeutResNeut5_4_1 = (TH1F*) inFnuisanceNeut5_4_1->Get("T2K_CC0pi_XSec_2DPcos_anu_P0D_MC");
 	TFile* inFnuisanceGENIE = new TFile("~/Downloads/genie_r-2-12-10_T2K-P0D_AntiNuMuCC0pi_H2O.root", "OPEN");
 	TH1F* nuisNeutResGENIE = (TH1F*) inFnuisanceGENIE->Get("T2K_CC0pi_XSec_2DPcos_anu_P0D_MC");
 	//TFile* inFnuisanceNuWro = new TFile("~/Downloads/nuwro_18.02.1_T2K-P0D_AntiNuMuCC0pi_H2O.root", "OPEN");
@@ -125,7 +150,7 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 
 	TVector resNeut(19);
 	for(int ii=0; ii<19; ii++){
-		resNeut(ii) = (nuisNeutResNeut5_4_0->GetBinContent(ii+1) - xsecStat[ii]->GetMean())/xsecStat[ii]->GetMean();
+		resNeut(ii) = (nuisNeutResNeut5_4_1->GetBinContent(ii+1) - xsecStat[ii]->GetMean())/xsecStat[ii]->GetMean();
 	}
 	Float_t chi2resNeut = 0.;
 	TVector resNeut1 = xsecCov*resNeut;
@@ -162,6 +187,7 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 	TH1F** CosHistsNEUT = new TH1F*[7];
 	TH1F** CosHistsNEUTSF = new TH1F*[7];
 	TH1F** CosHistsNuisNEUT = new TH1F*[7];
+	TH1F** CosHistsNuisNEUT5_4_1 = new TH1F*[7];
 	TH1F** CosHistsNuisNEUT5_4_0 = new TH1F*[7];
 	TH1F** CosHistsNuisGENIE = new TH1F*[7];
 	TH1F** CosHistsNuisNuWro = new TH1F*[7];
@@ -186,6 +212,9 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 		labelStr = "CosHistsNuisNEUT";
 		labelStr += ii;
 		CosHistsNuisNEUT[ii] = new TH1F(labelStr,"",tempNbins,CosBinDraw[ii+1]);
+		labelStr = "CosHistsNuisNEUT5_4_1";
+		labelStr += ii;
+		CosHistsNuisNEUT5_4_1[ii] = new TH1F(labelStr,"",tempNbins,CosBinDraw[ii+1]);
 		labelStr = "CosHistsNuisNEUT5_4_0";
 		labelStr += ii;
 		CosHistsNuisNEUT5_4_0[ii] = new TH1F(labelStr,"",tempNbins,CosBinDraw[ii+1]);
@@ -215,6 +244,7 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 			CosHistsNEUT[ii]->SetBinContent(jj+1,xsecStatNEUT[nFilled]->GetMean());
 			CosHistsNEUTSF[ii]->SetBinContent(jj+1,xsecStatNEUTSF[nFilled]->GetMean());
 			CosHistsNuisNEUT[ii]->SetBinContent(jj+1, nuisNeutRes->GetBinContent(nFilled+1));
+			CosHistsNuisNEUT5_4_1[ii]->SetBinContent(jj+1, nuisNeutResNeut5_4_1->GetBinContent(nFilled+1));
 			CosHistsNuisNEUT5_4_0[ii]->SetBinContent(jj+1, nuisNeutResNeut5_4_0->GetBinContent(nFilled+1));
 			CosHistsNuisGENIE[ii]->SetBinContent(jj+1, nuisNeutResGENIE->GetBinContent(nFilled+1));
 			CosHistsNuisNuWro[ii]->SetBinContent(jj+1, nuisNeutResNuWro->GetBinContent(nFilled+1));
@@ -282,8 +312,13 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 		CosHistsNuisNEUT[ii]->SetLineWidth(3);
 		CosHistsNuisNEUT[ii]->SetLineStyle(7);
 
+		CosHistsNuisNEUT5_4_1[ii]->Scale(1e41);
+		CosHistsNuisNEUT5_4_1[ii]->SetLineColor(kBlue);
+		CosHistsNuisNEUT5_4_1[ii]->SetLineWidth(3);
+		CosHistsNuisNEUT5_4_1[ii]->SetLineStyle(8);
+
 		CosHistsNuisNEUT5_4_0[ii]->Scale(1e41);
-		CosHistsNuisNEUT5_4_0[ii]->SetLineColor(kBlue);
+		CosHistsNuisNEUT5_4_0[ii]->SetLineColor(kRed);
 		CosHistsNuisNEUT5_4_0[ii]->SetLineWidth(3);
 		CosHistsNuisNEUT5_4_0[ii]->SetLineStyle(8);
 
@@ -318,12 +353,13 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 		CosHists[ii]->SetLineColor(kBlack);
 		CosHists[ii]->SetLineWidth(3);
 
-		CosHists[ii]->Draw("PE0");
+		//CosHists[ii]->Draw("PE0");
 		//CosHistsNuisNEUT[ii]->Draw("same hist");
 		CosHistsNuisNEUT5_4_0[ii]->Draw("same hist");
-		CosHistsNuisGENIE[ii]->Draw("same hist");
+		CosHistsNuisNEUT5_4_1[ii]->Draw("same hist");
+		//CosHistsNuisGENIE[ii]->Draw("same hist");
 		//CosHistsNuisNuWro[ii]->Draw("same hist");
-		CosHistsNuisNuWro1[ii]->Draw("same hist");
+		//CosHistsNuisNuWro1[ii]->Draw("same hist");
 
         gPad->SetTopMargin(0.05);
         gPad->SetBottomMargin(0.10);  
@@ -335,19 +371,25 @@ void DrawCallumXsec(Float_t** nData, Float_t** nSel, Float_t** nGen, Float_t** n
 	}
 
     subPad->cd(8);
-    TLegend* leg  = new TLegend(0.1, 0.1, 0.95, 0.9, "", "NDC");
+    TLegend* leg  = new TLegend(0., 0., 0.7, 0.9, "", "NDC");
     leg->SetShadowColor(0);
     leg->SetFillColor(0);
     leg->SetBorderSize(0);
     leg->SetTextSize(0.09);
     leg->SetLineWidth(0);
     leg->AddEntry(CosHists[0], "DATA", "le");
-    //leg->AddEntry(CosHistsNuisNEUT[0], "NEUT v5.?.?", "l");
-    leg->AddEntry(CosHistsNuisNEUT5_4_0[0], "NEUT v5.4.0", "l");
-    leg->AddEntry(CosHistsNuisGENIE[0], "GENIE v2.12.10", "l");
-    leg->AddEntry(CosHistsNuisNuWro1[0], "NuWro v18.02.1", "l");
-    //leg->AddEntry(CosHistsNuisNuWro[0], "NuWro old", "l");
-    //leg->AddEntry(CosHistsNuisNuWro1[0], "NuWro new", "l");
+
+    //Regularized
+    //leg->AddEntry(CosHistsNuisNEUT5_4_1[0], "#splitline{NEUT LFG+2p2h}{#chi^{2}=22.2}", "l");//v5.4.0
+    //leg->AddEntry(CosHistsNuisGENIE[0], "#splitline{GENIE BRRFG}{#chi^{2}=26.0}", "l");//v2.12.10
+    //leg->AddEntry(CosHistsNuisNuWro1[0], "#splitline{NuWro LFG+2p2h}{#chi^{2}=16.8}", "l");//v18.02.1
+	
+    //Unregularized
+    leg->AddEntry(CosHistsNuisNEUT5_4_1[0], "#splitline{NEUT LFG+2p2h}{#chi^{2}=25.1}", "l");//v5.4.0
+    leg->AddEntry(CosHistsNuisNEUT5_4_0[0], "#splitline{old NEUT LFG+2p2h}{#chi^{2}=25.1}", "l");//v5.4.0
+    //leg->AddEntry(CosHistsNuisGENIE[0], "#splitline{GENIE BRRFG}{#chi^{2}=28.4}", "l");//v2.12.10
+    //leg->AddEntry(CosHistsNuisNuWro1[0], "#splitline{NuWro LFG+2p2h}{#chi^{2}=18.4}", "l");//v18.02.1
+
     leg->Draw();
     gPad->Update();
     
